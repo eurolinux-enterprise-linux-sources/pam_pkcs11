@@ -1,0 +1,12 @@
+diff -up ./src/mappers/ms_mapper.c.upn-crash-fix ./src/mappers/ms_mapper.c
+--- ./src/mappers/ms_mapper.c.upn-crash-fix	2018-02-08 11:04:07.323179869 -0800
++++ ./src/mappers/ms_mapper.c	2018-02-08 11:04:29.532900681 -0800
+@@ -148,7 +148,7 @@ static int ms_mapper_match_user(X509 *x5
+ 	    char *login;
+ 	    if (ignorecase) login= check_upn(tolower_str(str));
+ 	    else            login= check_upn(clone_str(str));
+-	    if ( compare_name(login,user) ) {
++	    if ( login && compare_name(login,user) ) {
+ 		DBG2("Match found for entry '%s' & login '%s'",str,login);
+ 		match_found=1;
+ 	    } else {

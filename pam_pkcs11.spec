@@ -6,7 +6,7 @@
 
 Name:           pam_pkcs11
 Version:        0.6.2
-Release:        15%{?dist}
+Release:        17%{?dist}
 Summary:        PKCS #11/NSS PAM login module
 
 Group:          System Environment/Base
@@ -27,6 +27,8 @@ Patch9:		pam_pkcs11-0.6.2-coverity-fixes.patch
 Patch10:	pam_pkcs11-0.6.2-mem-leak.patch
 Patch11:	pam_pkcs11-0.6.2-drop_path.patch
 Patch12:	pam_pkcs11-0.6.2-use_pkix.patch
+Patch13:	pam_pkcs11-0.6.2-generic-mapper-fix.patch
+Patch14:	pam_pkcs11-0.6.2-upn-crash-fix.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  pam-devel
@@ -71,6 +73,8 @@ Additional included pam_pkcs11 related tools
 %patch10 -p1 -b .mem-leack
 %patch11 -p1 -b .drop-path
 %patch12 -p1 -b .use_pkix
+%patch13 -p1 -b .generic-mapper-fix
+%patch14 -p1 -b .upn-crash-fix
 
 %build
 
@@ -157,6 +161,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/card_eventmgr.1.gz
 
 %changelog
+* Thu Feb 8 2018 Bob Relyea <rrelyea@redhat.com> 0.6.2-17
+- Fix crash when using certs with UPNs
+- Fix crash when using the generic mapper
+
 * Mon Jan 11 2016 Bob Relyea <rrelyea@redhat.com> 0.6.2-15
 - Use PKIX for path validation.
 - Fix cert_policy parameter in default pam_pkcs11.conf file.

@@ -1,0 +1,30 @@
+diff -up ./src/mappers/generic_mapper.c.generic-mapper-fix ./src/mappers/generic_mapper.c
+--- ./src/mappers/generic_mapper.c.generic-mapper-fix	2018-02-08 10:35:10.099017509 -0800
++++ ./src/mappers/generic_mapper.c	2018-02-08 10:38:48.904267034 -0800
+@@ -100,7 +100,7 @@ static char *generic_mapper_find_user(X5
+ 	/* and now return first nonzero item */
+ 	for (n=0;n<CERT_INFO_SIZE;n++) {
+ 	    char *str=entries[n];
+-	    if (!str && !is_empty_str(str) ) return clone_str(str);
++	    if (str && !is_empty_str(str) ) return clone_str(str);
+ 	}
+ 	/* arriving here means no map found */
+ 	return NULL;
+@@ -127,7 +127,7 @@ static int generic_mapper_match_user(X50
+ 	/* and now try to match entries with provided login  */
+ 	for (n=0;n<CERT_INFO_SIZE;n++) {
+ 	    char *str=entries[n];
+-	    if (str || is_empty_str(str) ) continue;
++	    if (!str || is_empty_str(str) ) continue;
+ 	    DBG2("Trying to match generic_mapped entry '%s' with login '%s'",str,login);
+ 	    if (ignorecase) {
+ 		if (! strcasecmp(str,login) ) return 1;
+@@ -187,7 +187,7 @@ mapper_module * generic_mapper_module_in
+ 	    DBG1("Invalid certificate item to search '%s'; using 'cn'",item);
+ 	}
+ 	pt = init_mapper_st(blk,name);
+-	if (pt) DBG5("Generic mapper started. debug: %d, mapfile: '%s', ignorecase: %d usepwent: %d idType: '%s'",debug,mapfile,ignorecase,usepwent,id_type);
++	if (pt) DBG5("Generic mapper started. debug: %d, mapfile: '%s', ignorecase: %d usepwent: %d idType: %d",debug,mapfile,ignorecase,usepwent,id_type);
+ 	else DBG("Generic mapper initialization failed");
+ 	return pt;
+ }
