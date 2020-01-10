@@ -6,7 +6,7 @@
 
 Name:           pam_pkcs11
 Version:        0.6.2
-Release:        12.1%{?dist}
+Release:        14%{?dist}
 Summary:        PKCS #11/NSS PAM login module
 
 Group:          System Environment/Base
@@ -22,6 +22,10 @@ patch4:		pam_pkcs11-0.6.2-bad_token_fix.patch
 Patch5:		pam_pkcs11-0.6.2-fix-arg-parsing.patch
 Patch6:		pam_pkcs11-0.6.2-no_errors.patch
 Patch7:		pam_pkcs11-0.6.2-no_remote_spew.patch
+Patch8:		pam_pkcs11-default-ssl.patch
+Patch9:		pam_pkcs11-0.6.2-coverity-fixes.patch 
+Patch10:	pam_pkcs11-0.6.2-mem-leak.patch
+Patch11:	pam_pkcs11-0.6.2-drop_path.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  pam-devel
@@ -61,6 +65,10 @@ Additional included pam_pkcs11 related tools
 %patch5 -p1 -b .fix-arg-parsing
 %patch6 -p1 -b .no-errors
 %patch7 -p1 -b .no-remote-spew
+%patch8 -p1 -b .default-ssl
+%patch9 -p1 -b .coverity
+%patch10 -p1 -b .mem-leack
+%patch11 -p1 -b .drop-path
 
 %build
 
@@ -147,6 +155,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/card_eventmgr.1.gz
 
 %changelog
+* Tue May 13 2014 Bob Relyea <rrelyea@redhat.com> 0.6.2-14
+- Handle PKCS #11 modules when NSS or pam_pkcs11 only specify a partial path
+- Fix coverity issues (found in 7.0 coverity scan)
+
+* Tue Aug 13 2013 Bob Relyea <rrelyea@redhat.com> 0.6.2-13
+- If the ssl part is specified for ldap, default to ldaps unless
+  otherwise specified in the .conf file
+
 * Wed Feb 29 2012 Bob Relyea <rrelyea@redhat.com> 0.6.2-12.1
 - Silence unexpected error messages when logged in remotely console
 

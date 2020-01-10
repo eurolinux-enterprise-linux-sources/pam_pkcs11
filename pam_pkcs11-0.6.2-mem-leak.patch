@@ -1,0 +1,41 @@
+diff -up ./src/pam_pkcs11/pam_pkcs11.c.mem-leak ./src/pam_pkcs11/pam_pkcs11.c
+--- ./src/pam_pkcs11/pam_pkcs11.c.mem-leak	2014-02-24 15:01:47.207019357 -0800
++++ ./src/pam_pkcs11/pam_pkcs11.c	2014-02-24 15:22:37.715982927 -0800
+@@ -163,8 +163,14 @@ static int pam_get_pwd(pam_handle_t *pam
+     /* save password if variable nitem is set */
+     if ((nitem == PAM_AUTHTOK) || (nitem == PAM_OLDAUTHTOK)) {
+       rv = pam_set_item(pamh, nitem, *pwd);
+-      if (rv != PAM_SUCCESS)
++      if (rv != PAM_SUCCESS) {
++        if (*pwd) {
++          memset (*pwd, 0, strlen(*pwd));
++          free(*pwd);
++          *pwd = NULL;
++        }
+         return rv;
++      }
+     }
+     return PAM_SUCCESS;
+   }
+@@ -176,7 +182,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_h
+   int i, rv;
+   const char *user = NULL;
+   char *password;
+-  char password_prompt[70];
++  char password_prompt[180];
+   unsigned int slot_num = 0;
+   int is_a_screen_saver = 0;
+   struct configuration_st *configuration;
+@@ -281,9 +287,11 @@ PAM_EXTERN int pam_sm_authenticate(pam_h
+ 	    DBG1("explicit username = [%s]", user);
+ 	}
+   } else {
+-	sprintf(password_prompt,
++	snprintf(password_prompt, sizeof(password_prompt),
+ 		_("Please insert your %s or enter your username."),
+ 		_(configuration->token_type));
++        /* make sure we are NULL terminated if snprintf has to truncate */
++        password_prompt[sizeof(password_prompt)-1] =0; 
+ 	pam_prompt(pamh, PAM_TEXT_INFO, NULL, password_prompt);
+ 	/* get user name */
+ 	rv = pam_get_user(pamh, &user, NULL);

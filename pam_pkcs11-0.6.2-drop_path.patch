@@ -1,0 +1,39 @@
+diff -up ./src/common/pkcs11_lib.c.drop-path ./src/common/pkcs11_lib.c
+--- ./src/common/pkcs11_lib.c.drop-path	2014-05-14 11:46:56.436223511 -0700
++++ ./src/common/pkcs11_lib.c	2014-05-14 12:13:50.978222998 -0700
+@@ -211,20 +211,33 @@ int crypto_init(cert_policy *policy) {
+   return 0;
+ }
+ 
++static char *get_base_name(char *name)
++{
++  char *base;
++
++  if (name == NULL) {
++	return name;
++  }
++  base = rindex(name,'/');
++  if (base) return base+1;
++  return name;
++}
++
+ 
+ static SECMODModule *find_module_by_library(char *pkcs11_module)
+ {
+   SECMODModule *module = NULL;
+   SECMODModuleList *modList = SECMOD_GetDefaultModuleList();
++  char *module_base = get_base_name(pkcs11_module);
+ 
+   /* threaded applications should also acquire the
+    * DefaultModuleListLock */
+   DBG("Looking up module in list");
+   for ( ; modList; modList = modList->next) {
+-    char *dllName = modList->module->dllName;
++    char *dllName = get_base_name(modList->module->dllName);
+     DBG2("modList = 0x%x next = 0x%x\n", modList, modList->next);
+     DBG1("dllName= %s \n", dllName ? dllName : "<null>");
+-    if (dllName && strcmp(dllName,pkcs11_module) == 0) {
++    if (dllName && strcmp(dllName,module_base) == 0) {
+         module = SECMOD_ReferenceModule(modList->module);
+         break;
+     }
