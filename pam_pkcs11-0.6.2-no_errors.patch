@@ -1,0 +1,39 @@
+diff -up ./src/pam_pkcs11/pam_pkcs11.c.no_errors ./src/pam_pkcs11/pam_pkcs11.c
+--- ./src/pam_pkcs11/pam_pkcs11.c.no_errors	2011-01-17 16:07:21.915197014 -0800
++++ ./src/pam_pkcs11/pam_pkcs11.c	2011-01-17 16:17:34.132200111 -0800
+@@ -20,6 +20,7 @@
+ #define PAM_SM_ACCOUNT
+ #define PAM_SM_SESSION
+ #define PAM_SM_PASSWORD
++#define DEBUG_HIDE_PASSWORD
+ 
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+@@ -331,10 +332,10 @@ PAM_EXTERN int pam_sm_authenticate(pam_h
+   }
+ 
+   if (rv != 0) {
+-    ERR("no suitable token available");
+-    pam_syslog(pamh, LOG_ERR, "no suitable token available");
+ 
+     if (!configuration->card_only) {
++      ERR("no suitable token available");
++      pam_syslog(pamh, LOG_ERR, "no suitable token available");
+       release_pkcs11_module(ph);
+       return PAM_AUTHINFO_UNAVAIL;
+     }
+@@ -452,7 +453,13 @@ PAM_EXTERN int pam_sm_authenticate(pam_h
+     memset(password, 0, strlen(password));
+     free(password);
+     if (rv != 0) {
+-      ERR1("open_pkcs11_login() failed: %s", get_error());
++      /* entered the wrong pin, if card only is set, then don't spew the error
++       * to the console -- the user will see the login again request, but
++       * we do log the error to the syslog, so we can the history of smart card
++       * login failures */
++      if (!configuration->card_only) {
++        ERR1("open_pkcs11_login() failed: %s", get_error());
++      }
+       pam_syslog(pamh, LOG_ERR, "open_pkcs11_login() failed: %s", get_error());
+       goto auth_failed_nopw;
+     }
