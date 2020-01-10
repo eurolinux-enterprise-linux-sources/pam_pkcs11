@@ -6,7 +6,7 @@
 
 Name:           pam_pkcs11
 Version:        0.6.2
-Release:        11.1%{?dist}
+Release:        12.1%{?dist}
 Summary:        PKCS #11/NSS PAM login module
 
 Group:          System Environment/Base
@@ -21,6 +21,7 @@ patch3:		pam_pkcs11-0.6.2-nss_ldap_fix.patch
 patch4:		pam_pkcs11-0.6.2-bad_token_fix.patch
 Patch5:		pam_pkcs11-0.6.2-fix-arg-parsing.patch
 Patch6:		pam_pkcs11-0.6.2-no_errors.patch
+Patch7:		pam_pkcs11-0.6.2-no_remote_spew.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  pam-devel
@@ -59,6 +60,7 @@ Additional included pam_pkcs11 related tools
 %patch4 -p1 -b .bad-token-fix
 %patch5 -p1 -b .fix-arg-parsing
 %patch6 -p1 -b .no-errors
+%patch7 -p1 -b .no-remote-spew
 
 %build
 
@@ -145,6 +147,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/card_eventmgr.1.gz
 
 %changelog
+* Wed Feb 29 2012 Bob Relyea <rrelyea@redhat.com> 0.6.2-12.1
+- Silence unexpected error messages when logged in remotely console
+
 * Tue Jan 18 2011 Bob Relyea <rrelyea@redhat.com> 0.6.2-11.1
 - Silence expected errors from the console
 - make sure change log has correct dates and email
