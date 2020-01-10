@@ -6,7 +6,7 @@
 
 Name:           pam_pkcs11
 Version:        0.6.2
-Release:        14%{?dist}
+Release:        15%{?dist}
 Summary:        PKCS #11/NSS PAM login module
 
 Group:          System Environment/Base
@@ -26,6 +26,7 @@ Patch8:		pam_pkcs11-default-ssl.patch
 Patch9:		pam_pkcs11-0.6.2-coverity-fixes.patch 
 Patch10:	pam_pkcs11-0.6.2-mem-leak.patch
 Patch11:	pam_pkcs11-0.6.2-drop_path.patch
+Patch12:	pam_pkcs11-0.6.2-use_pkix.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  pam-devel
@@ -69,6 +70,7 @@ Additional included pam_pkcs11 related tools
 %patch9 -p1 -b .coverity
 %patch10 -p1 -b .mem-leack
 %patch11 -p1 -b .drop-path
+%patch12 -p1 -b .use_pkix
 
 %build
 
@@ -155,6 +157,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/card_eventmgr.1.gz
 
 %changelog
+* Mon Jan 11 2016 Bob Relyea <rrelyea@redhat.com> 0.6.2-15
+- Use PKIX for path validation.
+- Fix cert_policy parameter in default pam_pkcs11.conf file.
+
 * Tue May 13 2014 Bob Relyea <rrelyea@redhat.com> 0.6.2-14
 - Handle PKCS #11 modules when NSS or pam_pkcs11 only specify a partial path
 - Fix coverity issues (found in 7.0 coverity scan)
