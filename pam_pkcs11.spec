@@ -6,7 +6,7 @@
 
 Name:           pam_pkcs11
 Version:        0.6.2
-Release:        24.2%{?dist}
+Release:        24%{?dist}
 Summary:        PKCS #11/NSS PAM login module
 
 Group:          System Environment/Base
@@ -30,7 +30,6 @@ Patch12:	pam_pkcs11-0.6.2-drop_path.patch
 Patch13:	pam_pkcs11-fix-conf-man.patch
 Patch14:	pam_pkcs11-0.6.2-uid-attribute.patch
 Patch15:	pam_pkcs11-0.6.2-fix-debug-output.patch
-Patch16:	pam_pkcs11-0.6.2-generic-mapper-fix.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -77,7 +76,6 @@ Additional included pam_pkcs11 related tools
 %patch13 -p1 -b .fix-conf-man
 %patch14 -p1 -b .uid-attribute
 %patch15 -p1 -b .fix-debug-output
-%patch16 -p1 -b .generic-mapper-fix
 
 #
 # don't rebuilds pam_pkcs11.html it creates a bunch of unique ids, which 
@@ -167,10 +165,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/card_eventmgr.1.gz
 
 %changelog
-* Thu Jun 28 2016 Bob Relyea <rrelyea@redhat.com> 0.6.2-25
-- fix the generic mapper
-- update the pam_pkcs11 to show certs come from the cert database
-
 * Fri Sep 11 2015 Bob Relyea <rrelyea@redhat.com> 0.6.2-24
 - fix incorrect debug output in uid_attribute patch
 
