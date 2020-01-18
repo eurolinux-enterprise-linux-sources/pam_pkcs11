@@ -1,0 +1,92 @@
+diff -up ./src/mappers/ms_mapper.c.add-ms-map-file ./src/mappers/ms_mapper.c
+--- ./src/mappers/ms_mapper.c.add-ms-map-file	2008-12-31 04:13:39.000000000 -0800
++++ ./src/mappers/ms_mapper.c	2017-03-10 15:34:17.221925575 -0800
+@@ -43,8 +43,8 @@
+ * UPN OtherName: user@domain.com
+ * UPN encoding:ASN1 UTF8
+ *
+-* As UPN has in-built login and domain, No mapping file is used: login
+-* is implicit.
++* As UPN has in-built login and domain.
++* 
+ * A "checkdomain" flag is tested to compare domain if set.
+ * TODO: talk to Active Domain Service certificate an login validation
+ */
+@@ -53,6 +53,7 @@ static int ignorecase = 0;
+ static int ignoredomain =0;
+ static const char *domainname="";
+ static const char *domainnickname="";
++static const char *mapfile="none";
+ static int debug =0;
+ 
+ /* check syntax and domain match on provided string */
+@@ -106,6 +107,37 @@ static char ** ms_mapper_find_entries(X5
+ }
+ 
+ /*
++ * We want to process the entry into a possible user name.
++ * 1) first we see if there is a mapping in the mapping file.
++ * 2) if there is a mapping and we are ignoring the domain, then we just return it.
++ * 3) otherwise we need to check to see if the upn is valid. If we are ignoring case,
++ * we need to test the upn against an all lower version.
++ *
++ * This guarrentees: 
++ *     1) if we have a mapping file, we will use the value in the mapping file. 
++ *     2) we can force normal upn domain parsing on the map by setting ignoredomain to
++ *     false.
++ *     3) if there isn't a mapping, we will validate the full upn.
++ */
++static char *ms_get_user(const char *user)
++{
++	char *res = clone_str(user);
++	if (mapfile && (!is_empty_str((char *)mapfile)) 
++						&& (strcmp(mapfile,"none"))) {
++	    res = mapfile_find(mapfile, (char *)user, ignorecase);
++	}
++	/* if we mapped it and we are ignoring domain, just return it. */
++	if (ignoredomain && strcmp(user,res)) {
++		return clone_str(res);
++	}
++	/* now check the upn */
++	if (ignorecase) {
++	    return check_upn(tolower_str(res));
++	}
++	return check_upn(clone_str(res));
++}
++
++/*
+ parses the certificate and return the first valid UPN entry found, or NULL
+ */
+ static char * ms_mapper_find_user(X509 *x509, void *context) {
+@@ -117,9 +149,8 @@ static char * ms_mapper_find_user(X509 *
+         }
+ 	/* parse list until a valid string is found */
+ 	for (str=*entries; str; str=*++entries) {
+-	     char *item,*res;
+-	     item = (ignorecase)?tolower_str(entries[0]):clone_str(entries[0]);
+-	     res= check_upn(item);
++	     char *res;
++	     res= ms_get_user(str);
+ 	     if (res) {
+ 	        DBG2("Found valid UPN: '%s' maps to '%s' ",str,res);
+ 		return clone_str(res);
+@@ -145,9 +176,8 @@ static int ms_mapper_match_user(X509 *x5
+         }
+         /* parse list of uids until match */
+         for (str=*entries; str && (match_found==0); str=*++entries) {
+-	    char *login;
+-	    if (ignorecase) login= check_upn(tolower_str(str));
+-	    else            login= check_upn(clone_str(str));
++	    char *login = ms_get_user(str);
++		
+ 	    if ( compare_name(login,user) ) {
+ 		DBG2("Match found for entry '%s' & login '%s'",str,login);
+ 		match_found=1;
+@@ -191,6 +221,7 @@ mapper_module * ms_mapper_module_init(sc
+ 	ignoredomain = scconf_get_bool(blk,"ignoredomain",ignoredomain);
+ 	domainname = scconf_get_str(blk,"domainname",domainname);
+ 	domainnickname = scconf_get_str(blk,"domainnickname",domainnickname);
++	mapfile = scconf_get_str(blk,"mapfile",mapfile);
+ 	} else {
+ 		DBG1("No block declaration for mapper '%s'",mapper_name);
+ 	}

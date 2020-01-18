@@ -6,7 +6,7 @@
 
 Name:           pam_pkcs11
 Version:        0.6.2
-Release:        24%{?dist}
+Release:        27%{?dist}
 Summary:        PKCS #11/NSS PAM login module
 
 Group:          System Environment/Base
@@ -30,6 +30,9 @@ Patch12:	pam_pkcs11-0.6.2-drop_path.patch
 Patch13:	pam_pkcs11-fix-conf-man.patch
 Patch14:	pam_pkcs11-0.6.2-uid-attribute.patch
 Patch15:	pam_pkcs11-0.6.2-fix-debug-output.patch
+Patch16:	pam_pkcs11-0.6.2-generic-mapper-fix.patch
+Patch17:	pam_pkcs11-0.6.2-add-ms-map-file.patch
+Patch18:	pam_pkcs11-0.6.2-strip-email-domain.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -76,6 +79,9 @@ Additional included pam_pkcs11 related tools
 %patch13 -p1 -b .fix-conf-man
 %patch14 -p1 -b .uid-attribute
 %patch15 -p1 -b .fix-debug-output
+%patch16 -p1 -b .generic-mapper-fix
+%patch17 -p1 -b .add-ms-map-file
+%patch18 -p1 -b .strip-email-domain
 
 #
 # don't rebuilds pam_pkcs11.html it creates a bunch of unique ids, which 
@@ -165,6 +171,19 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/card_eventmgr.1.gz
 
 %changelog
+* Thu Mar 23 2017 Bob Relyea <rrelyea@redhat.com> 0.6.2.27
+- Too aggressive on fixing date log, restore old date for 0.6.2-25
+
+* Mon Mar 13 2017 Bob Relyea <rrelyea@redhat.com> 0.6.2-26.1
+- Fix bad dates in change log
+
+* Fri Mar 10 2017 Bob Relyea <rrelyea@redhat.com> 0.6.2-26
+- strip the domain value off of the email address (@example.net)
+
+* Tue Jun 28 2016 Bob Relyea <rrelyea@redhat.com> 0.6.2-25
+- fix the generic mapper
+- update the pam_pkcs11 to show certs come from the cert database
+
 * Fri Sep 11 2015 Bob Relyea <rrelyea@redhat.com> 0.6.2-24
 - fix incorrect debug output in uid_attribute patch
 
