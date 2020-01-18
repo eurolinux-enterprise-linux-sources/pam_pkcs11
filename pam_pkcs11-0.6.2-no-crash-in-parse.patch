@@ -1,0 +1,18 @@
+diff -up ./src/scconf/parse.c.nocrash ./src/scconf/parse.c
+--- ./src/scconf/parse.c.nocrash	2017-10-30 16:01:29.413441507 -0700
++++ ./src/scconf/parse.c	2017-10-30 16:01:42.725667723 -0700
+@@ -80,7 +80,14 @@ static scconf_item *scconf_item_find(scc
+ {
+ 	scconf_item *item;
+ 
++	if (parser->key == NULL) {
++		return NULL;
++	}
++
+ 	for (item = parser->block->items; item; item = item->next) {
++		if (item->key == NULL) {
++			continue;
++		}
+ 		if (item->type == SCCONF_ITEM_TYPE_VALUE &&
+ 		    strcasecmp(item->key, parser->key) == 0) {
+ 			return item;

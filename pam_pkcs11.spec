@@ -6,7 +6,7 @@
 
 Name:           pam_pkcs11
 Version:        0.6.2
-Release:        27%{?dist}
+Release:        28%{?dist}
 Summary:        PKCS #11/NSS PAM login module
 
 Group:          System Environment/Base
@@ -33,6 +33,7 @@ Patch15:	pam_pkcs11-0.6.2-fix-debug-output.patch
 Patch16:	pam_pkcs11-0.6.2-generic-mapper-fix.patch
 Patch17:	pam_pkcs11-0.6.2-add-ms-map-file.patch
 Patch18:	pam_pkcs11-0.6.2-strip-email-domain.patch
+Patch19:	pam_pkcs11-0.6.2-no-crash-in-parse.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -82,6 +83,7 @@ Additional included pam_pkcs11 related tools
 %patch16 -p1 -b .generic-mapper-fix
 %patch17 -p1 -b .add-ms-map-file
 %patch18 -p1 -b .strip-email-domain
+%patch19 -p1 -b .no-crash-on-parse
 
 #
 # don't rebuilds pam_pkcs11.html it creates a bunch of unique ids, which 
@@ -171,6 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/card_eventmgr.1.gz
 
 %changelog
+* Mon Oct 20 2017 Bob Relyea <rrelyea@redhat.com> 0.6.2.28
+- Don't crash in the parser on bad input
+
 * Thu Mar 23 2017 Bob Relyea <rrelyea@redhat.com> 0.6.2.27
 - Too aggressive on fixing date log, restore old date for 0.6.2-25
 
