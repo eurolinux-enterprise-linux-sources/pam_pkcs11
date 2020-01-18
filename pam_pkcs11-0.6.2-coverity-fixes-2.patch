@@ -1,0 +1,154 @@
+diff -up ./src/common/cert_info.c.coverity-2 ./src/common/cert_info.c
+--- ./src/common/cert_info.c.coverity-2	2009-12-16 07:01:31.000000000 -0800
++++ ./src/common/cert_info.c	2018-06-21 16:34:04.739470838 -0700
+@@ -204,7 +204,8 @@ no_upn:
+ * @return utf-8 string array with provided information
+ */
+ char **cert_info(X509 *x509, int type, ALGORITHM_TYPE algorithm ) {
+-  static char *results[CERT_INFO_SIZE];
++  static char *results[CERT_INFO_SIZE+1];
++  const char *const_results[CERT_INFO_SIZE+1];
+   SECOidData *oid;
+   int i;
+ 
+@@ -231,13 +232,13 @@ char **cert_info(X509 *x509, int type, A
+       cert_fetchOID(&CERT_KerberosPN_OID, &kerberosPN_Entry);
+       return cert_GetNameElements(&x509->subject, CERT_KerberosPN_OID);
+     case CERT_EMAIL   : /* Certificate e-mail */
+-      for (i=1, results[0] = CERT_GetFirstEmailAddress(x509);
+-        results[i-1] && i < CERT_INFO_SIZE; i++) {
+-        results[i] = CERT_GetNextEmailAddress(x509, results[i-1]);
++      for (i=1, const_results[0] = CERT_GetFirstEmailAddress(x509);
++        const_results[i-1] && i < CERT_INFO_SIZE; i++) {
++        const_results[i] = CERT_GetNextEmailAddress(x509, results[i-1]);
+       }
+-      results[i] = NULL;
+-      for (i=0; results[i]; i++) {
+-        results[i] = strdup(results[i]);
++      const_results[i] = NULL;
++      for (i=0; const_results[i]; i++) {
++        results[i] = strdup(const_results[i]);
+       }
+       break;
+     /* need oid tag. */
+diff -up ./src/common/strings.c.coverity-2 ./src/common/strings.c
+--- ./src/common/strings.c.coverity-2	2008-08-28 12:12:45.000000000 -0700
++++ ./src/common/strings.c	2018-06-21 16:34:04.739470838 -0700
+@@ -170,7 +170,7 @@ char **split_static(const char *str,char
+ char *trim(const char *str){
+         char *from,*to;
+         int space=1;
+-        char *res=malloc(strlen(str));
++        char *res=malloc(strlen(str)+1);
+         if (!res) return NULL;
+         for(from=(char *)str,to=res;*from;from++) {
+                 if (!isspace(*from)) { space=0;*to++=*from; }
+diff -up ./src/common/uri.c.coverity-2 ./src/common/uri.c
+--- ./src/common/uri.c.coverity-2	2009-09-02 05:49:05.000000000 -0700
++++ ./src/common/uri.c	2018-06-21 16:34:04.739470838 -0700
+@@ -387,6 +387,7 @@ static int get_http(uri_t *uri, unsigned
+   if (sock == -1) {
+     freeaddrinfo(info);
+     set_error("socket() failed: %s", strerror(errno));
++    return -1;
+   }
+   DBG("connecting...");
+   rv = connect(sock, info->ai_addr, info->ai_addrlen);
+diff -up ./src/mappers/ldap_mapper.c.coverity-2 ./src/mappers/ldap_mapper.c
+--- ./src/mappers/ldap_mapper.c.coverity-2	2018-06-21 16:34:04.733470818 -0700
++++ ./src/mappers/ldap_mapper.c	2018-06-21 16:34:04.739470838 -0700
+@@ -842,7 +842,8 @@ ldap_build_filter(const char *filter, co
+ 
+ 	/* If no user name is specified, this is a search across all users. */
+ 	if (login != NULL) {
+-		escaped = ldap_encode_escapes(login, strlen(login));
++		escaped = ldap_encode_escapes((const unsigned char *)login, 
++						strlen(login));
+ 	} else {
+ 		escaped = strdup("*");
+ 	}
+diff -up ./src/pam_pkcs11/pam_pkcs11.c.coverity-2 ./src/pam_pkcs11/pam_pkcs11.c
+--- ./src/pam_pkcs11/pam_pkcs11.c.coverity-2	2018-06-21 16:34:04.725470792 -0700
++++ ./src/pam_pkcs11/pam_pkcs11.c	2018-06-21 16:35:21.074719244 -0700
+@@ -181,7 +181,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_h
+ {
+   int i, rv;
+   const char *user = NULL;
+-  char *password;
++  char *password = NULL;
+   char password_prompt[180];
+   unsigned int slot_num = 0;
+   int is_a_screen_saver = 0;
+@@ -437,6 +437,10 @@ PAM_EXTERN int pam_sm_authenticate(pam_h
+       release_pkcs11_module(ph);
+       pam_syslog(pamh, LOG_ERR,
+         "pam_get_pwd() failed: %s", pam_strerror(pamh, rv));
++      if (password) {
++         memset(password, 0, strlen(password));
++         free(password); /* erase and free in-memory password data */
++      }
+       return pkcs11_pam_fail;
+     }
+ #ifndef DEBUG_HIDE_PASSWORD
+@@ -611,7 +615,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_h
+    */
+   snprintf(env_temp, sizeof(env_temp) - 1,
+ 	   "PKCS11_LOGIN_TOKEN_NAME=%.*s",
+-	   (sizeof(env_temp) - 1) - strlen("PKCS11_LOGIN_TOKEN_NAME="),
++	   (int)((sizeof(env_temp) - 1) - strlen("PKCS11_LOGIN_TOKEN_NAME=")),
+ 	   get_slot_tokenlabel(ph));
+   rv = pam_putenv(pamh, env_temp);
+ 
+@@ -627,7 +631,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_h
+   if (issuer) {
+     snprintf(env_temp, sizeof(env_temp) - 1,
+ 	   "PKCS11_LOGIN_CERT_ISSUER=%.*s",
+-	   (sizeof(env_temp) - 1) - strlen("PKCS11_LOGIN_CERT_ISSUER="),
++	   (int)((sizeof(env_temp) - 1) - strlen("PKCS11_LOGIN_CERT_ISSUER=")),
+ 	   issuer[0]);
+     rv = pam_putenv(pamh, env_temp);
+   } else {
+@@ -647,7 +651,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_h
+   if (serial) {
+     snprintf(env_temp, sizeof(env_temp) - 1,
+ 	   "PKCS11_LOGIN_CERT_SERIAL=%.*s",
+-	   (sizeof(env_temp) - 1) - strlen("PKCS11_LOGIN_CERT_SERIAL="),
++	   (int)((sizeof(env_temp) - 1) - strlen("PKCS11_LOGIN_CERT_SERIAL=")),
+ 	   serial[0]);
+     rv = pam_putenv(pamh, env_temp);
+   } else {
+@@ -678,9 +682,6 @@ PAM_EXTERN int pam_sm_authenticate(pam_h
+   DBG("authentication succeeded");
+   return PAM_SUCCESS;
+ 
+-    /* quick and dirty fail exit point */
+-    memset(password, 0, strlen(password));
+-    free(password); /* erase and free in-memory password data */
+ 
+ auth_failed_nopw:
+     unload_mappers();
+diff -up ./src/tools/pkcs11_setup.c.coverity-2 ./src/tools/pkcs11_setup.c
+--- ./src/tools/pkcs11_setup.c.coverity-2	2009-12-19 05:07:11.000000000 -0800
++++ ./src/tools/pkcs11_setup.c	2018-06-21 16:34:04.743470851 -0700
+@@ -55,6 +55,10 @@ static const char *scconf_replace_str(sc
+     item = scconf_item_add(NULL, block, NULL, SCCONF_ITEM_TYPE_VALUE, option, list);
+ 
+     /* now clear out the item list */
++    if (item == NULL) {
++	scconf_list_destroy(list);
++	return NULL;
++    }
+     scconf_list_destroy(item->value.list);
+     item->value.list = list;  /* adopt */
+     return value;
+@@ -84,6 +88,10 @@ static int scconf_replace_str_list(sccon
+ 
+     item = scconf_item_add(NULL, block, NULL, SCCONF_ITEM_TYPE_VALUE, option, list);
+ 
++    if (item == NULL) {
++	scconf_list_destroy(list);
++	return 1;
++    }
+     /* now clear out the item list */
+     scconf_list_destroy(item->value.list);
+     item->value.list = list;  /* adopt */

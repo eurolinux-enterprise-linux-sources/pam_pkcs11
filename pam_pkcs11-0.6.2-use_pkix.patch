@@ -1,0 +1,16 @@
+diff -up ./src/common/pkcs11_lib.c.pkix ./src/common/pkcs11_lib.c
+--- ./src/common/pkcs11_lib.c.pkix	2016-01-11 17:50:54.125209641 -0800
++++ ./src/common/pkcs11_lib.c	2016-01-11 17:51:48.586525038 -0800
+@@ -198,9 +198,11 @@ int crypto_init(cert_policy *policy) {
+   }
+ 
+   if (rv != SECSuccess) {
+-    DBG1("NSS_Initialize faile: %s", SECU_Strerror(PR_GetError()));
++    DBG1("NSS_Initialize failed: %s", SECU_Strerror(PR_GetError()));
+     return -1;
+   }
++  (void )CERT_SetUsePKIXForValidation(PR_TRUE);
++
+   /* register a callback */
+   PK11_SetPasswordFunc(password_passthrough);
+ 

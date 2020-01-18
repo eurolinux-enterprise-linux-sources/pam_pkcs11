@@ -1,0 +1,67 @@
+diff -up ./src/mappers/ldap_mapper.c.ldap-connect-crash ./src/mappers/ldap_mapper.c
+--- ./src/mappers/ldap_mapper.c.ldap-connect-crash	2018-06-01 15:54:35.219876736 -0700
++++ ./src/mappers/ldap_mapper.c	2018-06-01 15:55:31.421259904 -0700
+@@ -134,6 +134,20 @@ static const int sscope[] = {
+ 
+ /*** Internal funcs ****************************************************/
+ 
++static int get_ldap_error(LDAP* ldap_connection)
++{
++	int rc;
++#if defined(HAVE_LDAP_GET_OPTION) && defined(LDAP_OPT_ERROR_NUMBER)
++	if (ldap_get_option (ldap_connection, LDAP_OPT_ERROR_NUMBER, &rc) !=
++            LDAP_SUCCESS)
++	{
++	  rc = LDAP_UNAVAILABLE;
++	}
++#else
++	rc = ldap_connection->ld_errno;
++#endif /* LDAP_OPT_ERROR_NUMBER */
++	return rc;
++}
+ 
+ static int do_init (LDAP ** ld, const char *uri, int ldapdefport)
+ {
+@@ -334,15 +348,7 @@ DBG2("do_bind(): bind DN=\"%s\" pass=\"%
+ 	{
+ DBG("do_bind: rv < 0");
+ 
+-#if defined(HAVE_LDAP_GET_OPTION) && defined(LDAP_OPT_ERROR_NUMBER)
+-		if (ldap_get_option (ldap_connection, LDAP_OPT_ERROR_NUMBER, &rc) !=
+-            LDAP_SUCCESS)
+-		{
+-		  rc = LDAP_UNAVAILABLE;
+-		}
+-#else
+-		rc = ldap_connection->ld_errno;
+-#endif /* LDAP_OPT_ERROR_NUMBER */
++		rc = get_ldap_error(ldap_connection);
+ 		/* Notify if we failed. */
+ 		DBG3("could not connect to LDAP server as %s - %d - %s",
+ 		  binddn, rc, ldap_err2string (rc));
+@@ -471,14 +477,7 @@ static int do_open (LDAP **ld, const cha
+ 		rc = ldap_result (*ld, msgid, 1, tvp, &res);
+ 		if (rc == -1)
+ 		{
+-#if defined(HAVE_LDAP_GET_OPTION) && defined(LDAP_OPT_ERROR_NUMBER)
+-			if (ldap_get_option (*ld, LDAP_OPT_ERROR_NUMBER, &rc) != LDAP_SUCCESS)
+-			{
+-				rc = LDAP_UNAVAILABLE;
+-			}
+-#else
+-			rc = ld->ld_errno;
+-#endif /* LDAP_OPT_ERROR_NUMBER */
++			rc = get_ldap_error(*ld);
+ 
+ 			DBG1("do_open(): ldap_start_tls failed: %s", ldap_err2string (rc));
+ 			return rc;
+@@ -1083,7 +1082,8 @@ static int ldap_get_certificate(const ch
+ 		 *  should be choosen, so that only one entry with
+ 		 * one attribute is returned */
+ 		if ( NULL == (entry = ldap_first_entry(ldap_connection, res))){
+-			DBG("ldap_first_entry() failed: %s");
++			DBG1("ldap_first_entry() failed: %s", 
++			   ldap_err2string(get_ldap_error(ldap_connection)) );
+ 			ldap_unbind_s(ldap_connection);
+ 			return(-4);
+ 		}
