@@ -1,0 +1,26 @@
+diff -up ./doc/pam_pkcs11.8.fix-conf-man ./doc/pam_pkcs11.8
+--- ./doc/pam_pkcs11.8.fix-conf-man	2009-12-19 05:26:19.000000000 -0800
++++ ./doc/pam_pkcs11.8	2015-08-31 17:27:33.221065050 -0700
+@@ -40,7 +40,7 @@ Report bugs ideas, comments, bug\-fixes
+ .I Juan Antonio Martinez <jonsito@teleline.es>
+ .SH "SEE ALSO"
+ .BR pam (8),
+-.BR pam_pkcs11.conf (5),
+-PAM Systems Administrator Guide,
++PAM Systems Administrator Guide (/usr/share/doc/pam_pkcs11-0.6.2/pam_pkcs11.htm
++l),
+ .I README.mappers
+ file, PAM\-PKCS#11 User Manual.
+diff -up ./doc/pam_pkcs11.8.in.fix-conf-man ./doc/pam_pkcs11.8.in
+--- ./doc/pam_pkcs11.8.in.fix-conf-man	2015-08-31 17:24:52.202957034 -0700
++++ ./doc/pam_pkcs11.8.in	2015-08-31 17:27:03.045607033 -0700
+@@ -40,7 +40,7 @@ Report bugs ideas, comments, bug\-fixes
+ .I Juan Antonio Martinez <jonsito@teleline.es>
+ .SH "SEE ALSO"
+ .BR pam (8),
+-.BR pam_pkcs11.conf (5),
+-PAM Systems Administrator Guide,
++PAM Systems Administrator Guide (/usr/share/doc/pam_pkcs11-0.6.2/pam_pkcs11.htm
++l),
+ .I README.mappers
+ file, PAM\-PKCS#11 User Manual.

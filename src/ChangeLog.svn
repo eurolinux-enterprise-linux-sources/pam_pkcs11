@@ -1,0 +1,1980 @@
+2009-12-17  ludovic.rousseau
+
+	* [r390] doc/pkcs11_setup.1: document use_module
+	* [r389] src/tools/pkcs11_setup.c: use ERR1() instead of DBG1() in
+	  case of error
+	* [r388] src/tools/pkcs11_listcerts.c: use printf() instead of
+	  DBG1() to display the certificates even if debug
+	  mode is not used
+	* [r387] doc/pkcs11_make_hash_link.1: add an EXAMPLE section
+	* [r386] doc/doxygen.conf.in: use @PACKAGE_VERSION@ so that
+	  configure replaces it by the correct value
+	* [r385] configure.in: generate doc/doxygen.conf
+
+2009-12-16  ludovic.rousseau
+
+	* [r384] doc/Makefile.am, doc/pkcs11_listcerts.1,
+	  doc/pkcs11_make_hash_link.1, doc/pkcs11_setup.1: add missing man
+	  pages
+	* [r383] src/tools/pkcs11_setup.c: add support of "debug" argument
+	* [r382] configure.in, doc/Makefile.am, doc/card_eventmgr.1,
+	  doc/card_eventmgr.1.in, doc/pkcs11_eventmgr.1,
+	  doc/pkcs11_eventmgr.1.in, doc/pkcs11_inspect.1,
+	  doc/pkcs11_inspect.1.in, doc/pklogin_finder.1,
+	  doc/pklogin_finder.1.in: The manpages do not use #PKGVERSION# any
+	  more. No need to convert them
+	* [r381] src/common/Makefile.am: link with $(LIBDL)
+	* [r380] configure.in: add a check for dlopen() in libdl
+
+2009-12-03  ludovic.rousseau
+
+	* [r379] src/common/pkcs11_lib.c, src/common/pkcs11_lib.h,
+	  src/pam_pkcs11/pam_pkcs11.c: "pam_pkcs11 doesn't work with cards
+	  with no PIN installed. It tries to
+	  C_Login() whenever PIN is really needed and fails with "C_Login()
+	  failed: 0x00000102".
+	  
+	  I've made a patch which corrects this behavior:
+	  
+	  * implements get_slot_login_required() function what checks
+	  whether
+	  current slot requires login
+	  * makes pam_pkcs11 ask for PIN only if it is needed"
+	  
+	  Thanks to Oleg Smirnov for the patch
+	  http://www.opensc-project.org/pipermail/opensc-devel/2009-December/012929.html
+
+2009-10-06  ludovic.rousseau
+
+	* [r378] src/mappers/Makefile.am, src/pam_pkcs11/Makefile.am: use
+	  -shared to avoid builing the useless static libraries
+	  
+	  Thanks to Diego Elio Pettenò for the patch
+	  http://www.opensc-project.org/pipermail/opensc-devel/2009-October/012598.html
+	* [r377] configure.in, src/mappers/Makefile.am,
+	  src/pam_pkcs11/Makefile.am, src/tools/Makefile.am: do not define
+	  static library in configure.in but use the .la files in
+	  the Makefile.am
+	* [r376] src/pam_pkcs11/Makefile.am: Do not use a custom install
+	  override rule
+	  
+	  Thanks to Diego Elio Pettenò for the patch
+	  http://www.opensc-project.org/pipermail/opensc-devel/2009-October/012587.html
+	* [r375] src/tools/Makefile.am: use ../pam_pkcs11/libfinder.la
+	  instead of directly pointing to .o files
+	* [r374] src/pam_pkcs11/Makefile.am: create a libfinder.la library
+	  for tools in src/tools/
+	* [r373] etc/Makefile.am: install examples in doc dir instead of
+	  pkgdata dir.
+	  
+	  Thanks to Diego Elio Pettenò for the patch
+	  http://www.opensc-project.org/pipermail/opensc-devel/2009-October/012587.html
+
+2009-09-21  ludovic.rousseau
+
+	* [r372] src/scconf/parse.c, src/scconf/scconf.c: sync with scconf
+	  from OpenSC
+
+2009-09-17  ludovic.rousseau
+
+	* [r371] src/common/pkcs11_lib.c: find_slot_by_slotlabel(): also
+	  check the slot is present
+	  
+	  Thanks to Aro RANAIVONDRAMBOLA for the patch
+	  http://www.opensc-project.org/pipermail/opensc-user/2009-August/003231.html
+
+2009-09-02  ludovic.rousseau
+
+	* [r370] src/tools/card_eventmgr.c: card_eventmgr.c:80: warning:
+	  nested extern declaration of ‘environ’
+	* [r369] src/tools/pkcs11_eventmgr.c: pkcs11_eventmgr.c:118:
+	  warning: nested extern declaration of ‘environ’
+	* [r368] doc/pkcs11_eventmgr.1.in: use the standard format for NAME
+	  section
+	  
+	  W: libpam-pkcs11: manpage-has-bad-whatis-entry
+	  usr/share/man/man1/pkcs11_eventmgr.1.gz
+
+2009-07-06  ludovic.rousseau
+
+	* [r367] src/common/cert_info.c: cert_info_sshpuk(): avoid a buffer
+	  overflow followed by a crash
+	  
+	  Thanks to Joshua Kinard for the bug report
+
+2009-07-03  ludovic.rousseau
+
+	* [r366] README: correct typos and remove spaces at end of lines
+
+2009-06-12  ludovic.rousseau
+
+	* [r364] configure.in: release 0.6.1
+	* [r363] src/common/cert_vfy.h, src/common/debug.h,
+	  src/common/strings.h: update Doxygen comments
+	* [r362] doc/doxygen.conf.in: updated using doxygen -u
+	* [r361] po/de.po, po/fr.po, po/pam_pkcs11.pot, po/pl.po, po/ru.po:
+	  update
+
+2008-12-19  ludovic.rousseau
+
+	* [r360] src/common/cert_info.c: BN_append(): avoid a possible
+	  memory leak (detected by cppcheck tool)
+
+2008-11-06  ludovic.rousseau
+
+	* [r359] src/mappers/ldap_mapper.c: ldap_get_certificate(): in case
+	  NSS is used
+	  - use CERT_NewTempCertificate() to create a certificate
+	  - use CERT_DestroyCertificate() to free a certificate
+	  
+	  thanks to Robert Relyea for the idea
+	  http://www.opensc-project.org/pipermail/opensc-devel/2008-November/011418.html
+	* [r358] src/common/NSPRerrs.h, src/common/SECerrs.h,
+	  src/common/algorithm.c, src/common/base64.h,
+	  src/common/cert_info.c, src/common/cert_info.h,
+	  src/common/cert_vfy.c, src/common/cert_vfy.h, src/common/debug.c,
+	  src/common/debug.h, src/common/error.h, src/common/pkcs11_lib.c,
+	  src/common/pkcs11_lib.h, src/common/rsaref/PKCS11_README,
+	  src/common/rsaref/pkcs11.h, src/common/rsaref/pkcs11f.h,
+	  src/common/rsaref/pkcs11t.h, src/common/secutil.h,
+	  src/common/strings.h, src/common/uri.c, src/mappers/cn_mapper.c,
+	  src/mappers/cn_mapper.h, src/mappers/digest_mapper.c,
+	  src/mappers/digest_mapper.h, src/mappers/generic_mapper.c,
+	  src/mappers/generic_mapper.h, src/mappers/krb_mapper.c,
+	  src/mappers/krb_mapper.h, src/mappers/ldap_mapper.c,
+	  src/mappers/ldap_mapper.h, src/mappers/mail_mapper.c,
+	  src/mappers/mail_mapper.h, src/mappers/mapper.c,
+	  src/mappers/mapper.h, src/mappers/mapperlist.h,
+	  src/mappers/ms_mapper.c, src/mappers/ms_mapper.h,
+	  src/mappers/null_mapper.h, src/mappers/opensc_mapper.c,
+	  src/mappers/opensc_mapper.h, src/mappers/openssh_mapper.c,
+	  src/mappers/openssh_mapper.h, src/mappers/pwent_mapper.c,
+	  src/mappers/pwent_mapper.h, src/mappers/subject_mapper.h,
+	  src/mappers/uid_mapper.c, src/mappers/uid_mapper.h,
+	  src/pam_pkcs11/mapper_mgr.c, src/pam_pkcs11/mapper_mgr.h,
+	  src/pam_pkcs11/pam_config.c, src/pam_pkcs11/pam_pkcs11.c,
+	  src/scconf/README.scconf, src/scconf/parse.c,
+	  src/tools/card_eventmgr.c, src/tools/pkcs11_eventmgr.c,
+	  src/tools/pkcs11_listcerts.c, src/tools/pkcs11_setup.c,
+	  src/tools/pklogin_finder.c: remove trailing tab and space
+	  characters
+	* [r357] src/mappers/ldap_mapper.c: ldap_get_certificate(): check
+	  the value of ldap_x509[rv] instead of
+	  ldap_x509. The previous test was never true
+	* [r356] src/mappers/ldap_mapper.c: ldap_get_certificate(): typo in
+	  log message
+	* [r355] src/mappers/ldap_mapper.c: ldap_get_certificate(): check
+	  returned value of malloc()
+
+2008-11-04  ludovic.rousseau
+
+	* [r354] src/common/cert_st.h, src/mappers/ldap_mapper.c: use ==
+	  instead of CERT_CompareCerts() to compare two NSS certificates.
+	  
+	  Thanks to Robert Relyea for the patch
+	  http://www.opensc-project.org/pipermail/opensc-devel/2008-October/011406.html
+
+2008-10-24  ludovic.rousseau
+
+	* [r353] src/common/cert_st.h, src/mappers/ldap_mapper.c:
+	  common/cert_st.h: define CERT_cmp to be either CERT_CompareCerts
+	  for NSS
+	  or X509_cmp for OpenSSL
+	  
+	  mappers/ldap_mapper.c: use CERT_cmp() instead of X509_cmp() the
+	  same
+	  code should work with NSS or OpenSSL
+
+2008-10-16  ludovic.rousseau
+
+	* [r352] src/common/pkcs11_lib.c: declare local function
+	  password_passthrough() static
+	  
+	  pkcs11_lib.c:169: warning: no previous prototype for
+	  'password_passthrough'
+	* [r351] src/common/pkcs11_lib.c: find_slot_by_number(): slot_num
+	  is unsigned int so to not check for
+	  slot_num >= 0
+	  
+	  pkcs11_lib.c:353: warning: comparison of unsigned expression >= 0
+	  is always true
+	* [r350] src/mappers/opensc_mapper.c: opensc_mapper_match_certs():
+	  local variables are only used if NSS is not
+	  used
+	* [r349] src/tools/pkcs11_eventmgr.c: declare two functions static
+	  to avoid no previous prototype warnings
+	* [r348] src/common/cert_vfy.c, src/common/error.c,
+	  src/mappers/ldap_mapper.c, src/tools/pkcs11_eventmgr.c: include
+	  .h files to avoid implicit declaration warnings
+	  
+	  Thanks to Stanislav Brabec for the patch
+	  http://www.opensc-project.org/pipermail/opensc-devel/2008-October/011390.html
+	* [r347] src/common/pkcs11_lib.c: pkcs11_lib.c:295: error:
+	  conflicting types for 'find_slot_by_number'
+	  pkcs11_lib.h:34: error: previous declaration of
+	  'find_slot_by_number' was here
+
+2008-10-14  ludovic.rousseau
+
+	* [r346] src/common/pkcs11_lib.c, src/common/pkcs11_lib.h:
+	  pkcs11_lib.c: In function 'find_slot_by_number':
+	  pkcs11_lib.c:1143: warning: comparison between signed and
+	  unsigned
+	  pkcs11_lib.c:1150: warning: comparison between signed and
+	  unsigned
+	* [r345] src/common/pkcs11_lib.c: rename index in idx
+	  
+	  pkcs11_lib.c:1212: warning: declaration of 'index' shadows a
+	  global declaration
+	  /usr/include/string.h:304: warning: shadowed declaration is here
+	* [r344] src/common/cert_info.c: cert_info.c:841: warning: pointer
+	  targets in passing argument 1 of
+	  'bin2hex' differ in signedness
+	* [r343] src/pam_pkcs11/pam_config.c: Passing slot_description= and
+	  token_type= on the command line was not
+	  handled correctly (crash)
+	* [r342] src/common/pkcs11_lib.c: pkcs11_lib.c:124: warning:
+	  implicit declaration of function 'isspace'
+	* [r341] etc/pam_pkcs11.conf.example, po/POTFILES.in, po/de.po,
+	  po/fr.po, po/pam_pkcs11.pot, po/pl.po, po/ru.po,
+	  src/pam_pkcs11/pam_config.c, src/pam_pkcs11/pam_config.h,
+	  src/pam_pkcs11/pam_pkcs11.c: Allow to configure the token name in
+	  the different PAM prompts. Default
+	  value is "Smart card". See token_type= configuration in
+	  etc/pam_pkcs11.conf
+	  
+	  Thanks to Huie-Ying Lee for the patch.
+
+2008-09-26  ludovic.rousseau
+
+	* [r340] src/common/Makefile.am: add missing secutil.h
+	  
+	  Thanks to Stanislav Brabec for the patch
+	* [r339] configure.in: correctly close ] and )
+	* [r338] src/common/cert_info.c, src/mappers/ms_mapper.c: Patch
+	  from Jacob Berkman improves Microsoft UPN OID support.
+	  
+	  Thanks to Stanislav Brabec
+	  http://www.opensc-project.org/pipermail/opensc-devel/2008-September/011336.html
+	* [r337] etc/pam_pkcs11.conf.example: add NSS (Network Security
+	  Service) config sample
+	* [r336] src/mappers/ms_mapper.c: Add support of domainnickname.
+	  
+	  Thanks to Jacob Berkman for the patch and Stanislav Brabec for
+	  the
+	  forward
+	* [r335] etc/pam_pkcs11.conf.example: add a missing ; at end of
+	  line
+	  
+	  Thanks to Stanislav Brabec for the patch
+	  Closes OpenSC ticket #154
+
+2008-09-25  ludovic.rousseau
+
+	* [r334] src/common/pkcs11_lib.c: load_pkcs11_module(): do not
+	  check that the group ownership of
+	  libpkcs11.so is 0. It is 2 on Solaris.
+	  
+	  Thanks to Huie-Ying Lee for the patch
+	  http://www.opensc-project.org/pipermail/opensc-devel/2008-September/011334.html
+
+2008-09-16  ludovic.rousseau
+
+	* [r333] configure.in, src/tools/pkcs11_eventmgr.c: Use daemon()
+	  only if supported by the platform (it is not available on
+	  Solaris)
+	  
+	  Thanks to Huie-Ying Lee for the patch
+	  http://www.opensc-project.org/pipermail/opensc-devel/2008-September/011326.html
+
+2008-09-12  ludovic.rousseau
+
+	* [r332] etc/pam_pkcs11.conf.example, src/common/pkcs11_lib.c,
+	  src/common/pkcs11_lib.h, src/pam_pkcs11/pam_config.c,
+	  src/pam_pkcs11/pam_config.h, src/pam_pkcs11/pam_pkcs11.c,
+	  src/tools/pkcs11_inspect.c, src/tools/pkcs11_listcerts.c,
+	  src/tools/pklogin_finder.c: Patch to use identify a token by its
+	  slot description instead of slot number
+	  
+	  Thanks to Huie-Ying Lee for the patch
+	  http://www.opensc-project.org/pipermail/opensc-devel/2008-September/011317.html
+	  
+	  ======================================
+	  Problem
+	  ======================================
+	  Currently, the pam_pkcs11 module uses slot_num for the slot/token
+	  selection.
+	  However, this is not safe because there is no guaranteed ordering
+	  of slots
+	  returned from the PKCS#11 C_GetSlotList() function, according to
+	  the RSA
+	  PKCS#11 specification.
+	  
+	  On Solaris OS, the libpkcs11 library uses plug-ins to provide the
+	  slots. An
+	  administrator can install or uninstall a plug-in by using a
+	  utility command
+	  called "cryptoadm" on Solaris. Therefore, a particular slot may
+	  be associated
+	  with different slot numbers on different systems or even on the
+	  same system on
+	  different runs.
+	  
+	  ======================================
+	  Solution
+	  ======================================
+	  To address the above issue, our solution is to replace the
+	  "slot_num" entry
+	  with a "slot_description" entry in the "pam_pkcs11.conf"
+	  configuration file for
+	  the slot/token selection as illustrated below.
+	  
+	  - pam_pkcs11.conf -
+	  
+	  pkcs11_module default {
+	  
+	  module = /usr/lib/libpkcs11.so;
+	  description = "Solaris PKCS#11 Cryptographic Framework library";
+	  #
+	  # Which slot to use. The slot is specified by the slot
+	  description.
+	  # For example, slot_description = "Sun Crypto Softtoken".
+	  #
+	  # An administrator can use the "cryotoadm list -v" command to
+	  find
+	  # all the available slots and their slot descriptions. For more
+	  # information, see the libpkcs11(3LIB) and cryptoadm(1m) man
+	  pages.
+	  #
+	  # The default value is "none" which means to use the first slot
+	  with
+	  # an available token.
+	  #
+	  slot_description = "none"
+	  
+	  ...
+	  
+	  }
+	  
+	  The slot_description field will be used to specify the slot to be
+	  used. Its
+	  value should be the slot label for the slot, which is basically
+	  the same as the
+	  slotDescription string in the CK_SLOT_INFO structure returned
+	  from the
+	  C_GetSlotInfo() function.
+	  
+	  In the original slot_num design, when slot_num is 0, it means to
+	  use the first
+	  slot with an available token. To provide a similar functionality,
+	  an
+	  administrator can specify slot_description to be "none", which
+	  also means to
+	  use the first slot with an available token.
+
+2008-09-09  ludovic.rousseau
+
+	* [r331] src/common/pkcs11_lib.c: find_slot_by_number: complete
+	  patch in revision 330
+	* [r330] src/common/pkcs11_lib.c: find_slot_by_number(): BUG: the
+	  slot index is slot_num and not i
+	  
+	  thanks to Huie-Ying Lee for the patch
+	* [r329] src/pam_pkcs11/pam_config.c: pk_configure(): correct a
+	  typo "slot_nume" -> "slot_num"
+	  
+	  Thanks to Huie-Ying Lee for the patch
+	* [r328] doc/export-wiki.sh: upgrade (copy from OpenSC)
+
+2008-08-27  aj
+
+	* [r327] doc/export-wiki.xsl: fix script for wiki export.
+
+2008-08-19  ludovic.rousseau
+
+	* [r326] configure.in, src/common/Makefile.am,
+	  src/common/strndup.c: Provide strndup for platforms without this
+	  function (Solaris)
+
+2008-08-12  ludovic.rousseau
+
+	* [r325] src/mappers/ldap_mapper.c: do_init(): typo: use
+	  ldapdefport instead of defport
+	  
+	  Patch from Huie-Ying Lee
+	  http://www.opensc-project.org/pipermail/opensc-devel/2008-August/011239.html
+	* [r324] tools/make_hash_link.sh: protect variables with "" before
+	  checking the variable length
+	  
+	  Patch from Huie-Ying Lee
+	  http://www.opensc-project.org/pipermail/opensc-devel/2008-August/011239.html
+
+2008-05-30  ludovic.rousseau
+
+	* [r323] src/tools/card_eventmgr.c: avoir a double free error when
+	  a reader is disconnected and reconnected.
+	  
+	  Thanks to Frédéric Combeau for the patch
+
+2008-03-31  ludovic.rousseau
+
+	* [r322] configure.in, doc/card_eventmgr.1, doc/card_eventmgr.1.in,
+	  doc/pam_pkcs11.8, doc/pam_pkcs11.8.in, doc/pkcs11_eventmgr.1,
+	  doc/pkcs11_eventmgr.1.in, doc/pkcs11_inspect.1,
+	  doc/pkcs11_inspect.1.in, doc/pklogin_finder.1,
+	  doc/pklogin_finder.1.in: use confdir instead of the hardcoded
+	  value /etc/pam_pkcs11
+	* [r321] src/tools/card_eventmgr.c: parse_config_file(): also log
+	  the error message
+
+2008-03-25  ludovic.rousseau
+
+	* [r320] src/mappers/openssh_mapper.c, src/pam_pkcs11/pam_config.c,
+	  src/tools/card_eventmgr.c, src/tools/pkcs11_eventmgr.c,
+	  src/tools/pkcs11_setup.c: add support of CONFDIR instead of the
+	  hardcoded "/etc/pam_pkcs11/"
+	* [r319] configure.in: add --with-confdir=DIR to configure the
+	  directory containing
+	  pam_pkcs11.conf, card_eventmgr.conf and pkcs11_eventmgr.conf
+	  (default
+	  /etc/pam_pkcs11)
+
+2008-03-20  ludovic.rousseau
+
+	* [r318] src/common/pkcs11_lib.c: use 0x%08lX instead of %x to
+	  format a PKCS#11 error code
+
+2008-02-25  ludovic.rousseau
+
+	* [r317] doc/Makefile.am: doxygen.conf is used by generate-api.sh
+	  so api/index.html target must
+	  depends on it
+	* [r316] po/remove-potcdate.sin: add po/remove-potcdate.sin
+	* [r315] aclocal/gettext.m4, aclocal/iconv.m4, aclocal/lib-ld.m4,
+	  aclocal/lib-link.m4, aclocal/lib-prefix.m4, aclocal/nls.m4,
+	  aclocal/po.m4, aclocal/progtest.m4: add gettext M4 macros
+	* [r314] configure.in: use gettext 0.17 instead of 0.16.1
+	* [r313] po/remove-potcdate.sed: add po/remove-potcdate.sed
+	* [r312] po/Makefile.in.in: add po/Makefile.in.in from gettext
+	  0.17-2
+	* [r311] config.rpath: add config.rpath from gettext 0.17-2
+	* [r310] src/tools/card_eventmgr.c: add void as parameter for
+	  thats_all_folks() definition
+	  card_eventmgr.c:64: warning: old-style function definition
+	* [r309] src/tools/pkcs11_eventmgr.c: add void as parameter for
+	  parse_config_file() and get_a_token()
+	  pkcs11_eventmgr.c:193: warning: old-style function definition
+	  pkcs11_eventmgr.c:354: warning: old-style function definition
+	* [r308] src/tools/card_eventmgr.c: add void as parameter in
+	  parse_config_file() definition
+	  card_eventmgr.c:157: warning: old-style function definition
+	* [r307] src/mappers/ldap_mapper.c: #define LDAP_DEPRECATED 1 so
+	  that deprecated functions are declared.
+	  The code should be updated to avoid the deprecated functions.
+	  See ticket #18
+	* [r306] src/pam_pkcs11/pam_pkcs11.c: declare is_spaced_str() as
+	  static
+	  pam_pkcs11.c:62: warning: no previous prototype for
+	  ‘is_spaced_str’
+	* [r305] src/common/debug.c: add void in the declaration of
+	  get_debug_level
+	  debug.c:31: warning: old-style function definition
+
+2007-09-13  ludovic.rousseau
+
+	* [r304] configure.in, po/de.po: add German (de) l10n
+	  
+	  Thanks to Peter Winterer
+	* [r303] po/ru.po: update using "make update-po"
+
+2007-09-11  ludovic.rousseau
+
+	* [r302] configure.in, po/ru.po: add Russian l10n
+	  
+	  Thanks to Sergio
+
+2007-08-13  ludovic.rousseau
+
+	* [r301] src/pam_pkcs11/pam_config.c: arguments starts at argv[1]
+	  and not argv[0]
+	  Avoids a warning message: "argument pkcs11_inspect is not
+	  supported
+	  by this module"
+
+2007-06-14  ludovic.rousseau
+
+	* [r300] configure.in, po/pl.po: add Polish (.pl) translation
+	  
+	  Thanks to Jakub Bogusz
+	* [r299] Makefile.am: remove a duplicate config.rpath in EXTRA_DIST
+
+2007-06-11  ludovic.rousseau
+
+	* [r297] configure.in: release 0.6.0
+	* [r296] pam_pkcs11.spec: update to version 0.6.0
+
+2007-06-06  ludovic.rousseau
+
+	* [r295] src/tools/pkcs11_setup.c: declare pname as unsigned to
+	  avoid:
+	  pkcs11_setup.c:436: warning: comparison between signed and
+	  unsigned
+	  pkcs11_setup.c:454: warning: comparison between signed and
+	  unsigned
+	* [r294] src/tools/pkcs11_setup.c: declare local functions static
+	* [r293] src/tools/pkcs11_setup.c: pkcs11_setup.c:44: attention :
+	  duplicate ‘const’
+	* [r292] src/tools/pkcs11_eventmgr.c: execute_event(): change
+	  parameter type from char * to const char *
+	* [r291] src/tools/pkcs11_eventmgr.c: remove unused (and duplicate)
+	  global variable expire_count
+	* [r290] src/tools/pkcs11_eventmgr.c: declare local functions
+	  static
+	* [r289] src/tools/pklogin_finder.c: pklogin_finder.c:37: attention
+	  : ‘user’ may be used uninitialized in this function
+	* [r288] src/mappers/opensc_mapper.c: opensc_mapper_match_certs():
+	  #include <openssl/pem.h> to avoid:
+	  opensc_mapper.c:103: warning: implicit declaration of function
+	  'PEM_read_bio_X509'
+	  opensc_mapper.c:103: warning: initialization makes pointer from
+	  integer without
+	  a cast
+	* [r287] src/mappers/ldap_mapper.c: warning: ISO C90 forbids mixed
+	  declarations and code
+	* [r286] src/mappers/ldap_mapper.c: ldap_add_uri(): declare the
+	  function static
+	  ldap_mapper.c:549: warning: no previous prototype for
+	  'ldap_add_uri'
+	* [r285] src/mappers/ldap_mapper.c: do_open(): rename parameter
+	  ssl_on to ssl_on_local to avoid:
+	  ldap_mapper.c:373: warning: declaration of 'ssl_on' shadows a
+	  global
+	  declarationldap_mapper.c:108: warning: shadowed declaration is
+	  here
+	* [r284] src/mappers/ldap_mapper.c: use C instead of C++ comments
+	  warning: C++ style comments are not allowed in ISO C90
+	* [r283] src/common/cert_info.c: BN_append(): only free(data) if
+	  data has been allocated
+
+2007-05-22  ludovic.rousseau
+
+	* [r282] configure.in, po/fr.po: add french l10n
+	* [r281] po/pam_pkcs11.pot, src/pam_pkcs11/pam_pkcs11.c: sync two
+	  texts to use the same l10n string
+	* [r280] aclocal: set svn:ignore property
+	* [r279] bootstrap: update
+	* [r278] Makefile.am: distribute config.rpath
+	* [r277] Makefile.am, configure.in, pam_pkcs11.spec, po,
+	  po/Makevars, po/POTFILES.in, po/pam_pkcs11.pot,
+	  src/pam_pkcs11/pam_pkcs11.c: NSS patch part 3 of 3 from Robert
+	  Relyea: l10n support
+	* [r276] Makefile.am: generate a distribute ChangeLog.svn
+	* [r275] doc, src/common, src/mappers, src/pam_pkcs11, src/scconf,
+	  src/tools: update svn:ignore
+	* [r274] ., doc, etc, src, src/common, src/common/rsaref,
+	  src/mappers, src/pam_pkcs11, src/scconf, src/tools, tools: set
+	  svn:ignore properties
+	* [r273] src/tools/pkcs11_setup.c: new file from pam_pkcs11 NSS
+	  patch part 2/3
+	  
+	  I just forgot to commit it with revision 270
+
+2007-05-21  ludovic.rousseau
+
+	* [r272] configure.in, src/pam_pkcs11/pam_pkcs11.c: pam_prompt() is
+	  only available on recent PAM versions.
+	  
+	  check if security/pam_ext.h exists and provide our own
+	  pam_prompt()
+	  function if not.
+	  
+	  Thanks to Robert Relyea for the patch
+	* [r271] src/common/cert_info.c, src/common/pkcs11_lib.c: typos in
+	  comments
+	* [r270] src/common/cert_info.c, src/common/pkcs11_lib.c,
+	  src/common/pkcs11_lib.h, src/common/strings.c,
+	  src/pam_pkcs11/pam_config.c, src/pam_pkcs11/pam_config.h,
+	  src/pam_pkcs11/pam_pkcs11.c, src/tools/Makefile.am,
+	  src/tools/pkcs11_eventmgr.c: pam_pkcs11 NSS patch part 2/3 from
+	  Robert Relyea
+	  http://www.opensc-project.org/pipermail/opensc-devel/2007-April/009751.html
+	  
+	  Here's patch installment 2 of 3.
+	  
+	  This patch adds some new semantics to allow pam_pkcs11 to play
+	  nice in
+	  both command line and gui applications. The heart of this change
+	  adds
+	  three new configuration options.
+	  
+	  card_only:
+	  1. If card only is set, pam_pkcs11 does not prompt for the user
+	  name
+	  if the token is inserted, but gets the user name from the token.
+	  2. If a token is inserted, it must be used to log in with,
+	  failure to
+	  unlock the token, or validate the certs will cause login to fail.
+	  3. If we logged in using a smart card, we must now authenticate
+	  using
+	  that same smart card.
+	  4. card_only is required to activate the remaining 2 options. If
+	  card_only is not set, the current pam_pkcs11 semantics apply
+	  (with the
+	  exception of some prompt name changes and the environment
+	  variables
+	  described below).
+	  
+	  wait_for_token:
+	  wait_for_token is only meaningful if card_only is set.
+	  if wait_for_token is set, then pam_pkcs11 will block waiting for
+	  an
+	  appropriate token to be inserted. An appropriate token is:
+	  1) a token that is inserted in the slot specified for login in
+	  the config
+	  file (if no slot is specified a token inserted in any slot).
+	  2) a token which matches the token used to log in initially.
+	  (only applies
+	  if you are logged in and you used a token to do so).
+	  
+	  screen_savers:
+	  is a list of screen saver services. This list is only parsed if
+	  card_only is
+	  set. Basically the screen saver will bypass pam_pkcs11 if a token
+	  was not
+	  used to login (The basic idea is you always unlock the screen
+	  saver with
+	  the same mechanism you used to login).
+	  
+	  The other major change is the addition of new environment
+	  variables:
+	  PKCS11_LOGIN_TOKEN_NAME - the name of the token used to log into
+	  the system.
+	  PKCS11_LOGIN_CERT_ISSUER - the issuer of the cert used to log in
+	  (rendered as a human readable string).
+	  PKCS11_LOGIN_CERT_SERIAL - the serial number of the cert used to
+	  log in
+	  (rendered as colon separated hex value).
+	  
+	  These environment variables are set at initial login.
+	  
+	  pam_pkcs11 uses PKCS_LOGIN_TOKEN_NAME to determine whether or not
+	  it
+	  needs to use a specific token to log into.
+	  
+	  screen savers use this environment variable to determine
+	  if it needs to kick in on token removal (this allows screen
+	  savers to be
+	  picky about when to kick in -- they don't have to kick in if you
+	  insert or
+	  remove a token that wasn't used to log into).
+	  
+	  pam_krb uses the PKCS11_LOGIN_CERT_ISSUER and
+	  PKCS11_LOGIN_CERT_SERIAL to
+	  determine which specific certificate was used to login in
+	  (issuer/serial
+	  number uniquely identifies a certificate).
+	  
+	  Typical usage for the patch:
+	  
+	  For a normal (card_only) case, your pam line would look like:
+	  
+	  auth [success=ok authinfo_unavail=2 ignore=2 default=die]
+	  pam_pkcs11.so
+	  
+	  For the case where you want to require the smart card as part of
+	  the
+	  authentication, your pam config line would look like:
+	  
+	  auth [success=ok ignore=2 default=die] pam_pkcs11.so
+	  wait_for_card
+	  
+	  If you share your pam_config file with all our services, you can
+	  restrict
+	  which services require smart card login with a pam_succeed_if
+	  before your
+	  pam_pkcs11 line:
+	  
+	  auth [success=3 default=ignore] pam_succeed_if.so service notin
+	  login:gdm:xdm:kdm:xscreensaver:gnome-screensaver:kscreensaver
+	  quiet use_uid
+	  
+	  --------------------------------------------------
+	  
+	  The patch itself, file by file:
+	  
+	  src/pam_pkcs11/pam_pkcs11.c -
+	  
+	  Most of the patch is in here. The implementation of the
+	  environment
+	  variables and new options are in this patch. In addition to the
+	  these,
+	  the patch has the following change:
+	  
+	  1) a bug fix for passing the password on in the pam_stack
+	  (required to
+	  pam_krb to successfully implement pkinit).
+	  2) use the pam_syslog() function instead of syslog().
+	  3) use of pam_prompt to allow gui apps to display important
+	  information.
+	  
+	  src/pam_pkcs11/pam_config.[ch] -
+	  
+	  parse the new options in pam_pkcs11.conf.
+	  
+	  src/tools/pkcs11_setup.c -
+	  src/tools/Makefile.am
+	  
+	  This is a new tool to allow command line editting of
+	  pam_pkcs11.conf and
+	  pkcs11_eventmgr.conf. It only supports adding insertion/removal
+	  actions and
+	  changing the default token. We don't actually use it any more,
+	  but it
+	  may have utility to others. I think the command may need some
+	  work to be more
+	  general.
+	  It's purpose is to allow perl/python/your favorite scripting
+	  language access
+	  to display and modify portions of the pam_pkcs11.conf file. (Feel
+	  free
+	  to drop it if you like, I've included it for completeness).
+	  
+	  src/tools/pkcs11_eventmgr.c -
+	  
+	  bug fix for a crash if module loading fails.
+	  
+	  src/common/cert_info.c
+	  
+	  Add the ability to fetch the certificate serial number when using
+	  the
+	  open ssl library.
+	  
+	  src/common/pkcs11_lib.[ch]
+	  
+	  Add find_slot_by_number_and_label() which optionally adds the
+	  token name as
+	  part of the slot selection criteria. Used by pam_pkcs11 in the
+	  case we are
+	  authenticating after we have already logged in.
+	  
+	  Add wait_for_token() which waits until an approriate token is
+	  inserted. Used
+	  to implement the wait_for_token option.
+	  
+	  src/common/strings.c
+	  
+	  Fix bug in bin2hex where it would trash the heap if asked to
+	  output a string
+	  for a zero length buffer.
+
+2007-05-15  ludovic.rousseau
+
+	* [r269] src/common/pkcs11_lib.c, src/tools/pkcs11_eventmgr.c:
+	  C_Initalize should be called after each fork
+	  
+	  The pkcs11_eventmgr first C_Initialize then becomes a daemon...
+	  The
+	  PKCS#11 standard states that after fork the user must call
+	  C_Initialize
+	  again, in order to allow proper library initialization at new
+	  process.
+	  
+	  Also, don't quit on major errors... try to reinitialize.
+	  
+	  Closes ticket #14. Thanks to Alon Bar-Lev for the patch
+
+2007-05-09  ludovic.rousseau
+
+	* [r268] configure.in, doc/pam_pkcs11.xml,
+	  etc/pam_pkcs11.conf.example, src/mappers/ldap_mapper.c:
+	  ldap-patches from Sandro Wefel
+	  http://www.opensc-project.org/pipermail/opensc-devel/2007-April/009764.html
+	  
+	  which offers:
+	  - support for more than one LDAP server as fallback system
+	  - support of secure connection (SSL+TLS) because someone may use
+	  simple
+	  authentication with username and password
+	  - multiple certificates per attribute
+	  - LDAP-URI support
+	  - selection of base, one-level or subtree search
+	  - timeout support and a somewhat enhanced documentation.
+	* [r267] src/pam_pkcs11/pam_pkcs11.c: typo in debug message
+	* [r266] src/pam_pkcs11/pam_config.c: typo: command line argument
+	  was checked against "pcs11_module=" instead
+	  of "pkcs11_module="
+	* [r265] src/mappers/mail_mapper.c: typo in a debug message
+
+2007-04-12  ludovic.rousseau
+
+	* [r264] src/common/uri.c: #include <stdio.h> de declare sprintf()
+	  and sscanf()
+	* [r263] src/pam_pkcs11/pam_pkcs11.c: use ERR() instead of DBG() to
+	  log errors so they are displayed (in red)
+	  even if debug is not used
+	* [r262] src/pam_pkcs11/pam_pkcs11.c: log the error "Remote login
+	  (from %s) is not (yet) supported if DISPLAY
+	  is not local"
+	* [r261] src/tools/pkcs11_inspect.c: use #ifdef instead of #if to
+	  avoid a
+	  pkcs11_inspect.c:96:5: warning: "HAVE_NSS" is not defined
+	* [r260] src/tools/card_eventmgr.c: declare local functions as
+	  static
+	* [r259] src/pam_pkcs11/pam_config.c: display_config() is defined
+	  but its use is commented so also comments its
+	  definition
+	* [r258] src/pam_pkcs11/pam_config.c: declare display_config() and
+	  parse_config_file() as static
+	* [r257] src/mappers/generic_mapper.c: get_mapped_entries(): remove
+	  a duplicate variable declaration
+	  generic_mapper.c:75: warning: declaration of 'res' shadows a
+	  previous local
+	* [r256] src/mappers/digest_mapper.c: digest_mapper_module_init():
+	  initialise a variable
+	  digest_mapper.c:111: warning: 'hash_alg_string' may be used
+	  uninitialized in this function
+	* [r255] src/common/pkcs11_lib.c: crypto_init(): add a missing
+	  return value
+	* [r254] src/common/pkcs11_lib.c: remove 3 unused variables
+	* [r253] src/common/pkcs11_lib.c: load_pkcs11_module(): rename
+	  variable C_GetFunctionList to
+	  C_GetFunctionList_ptr to avoid a compiler warning
+	  pkcs11_lib.c:640: warning: declaration of 'C_GetFunctionList'
+	  shadows a global declaration
+	  rsaref/pkcs11f.h:59: warning: shadowed declaration is here
+	* [r252] src/common/uri.c: add a const to avoid compiler warnings
+	* [r251] src/common/debug.c: debug_print(): declare t as (const
+	  char *) to avoid a compiler warning
+	* [r250] src/common/debug.c: #include <unistd.h>
+	  debug.c:38: warning: implicit declaration of function 'isatty'
+	* [r249] src/common/cert_info.c: cert_info_upn(): remove two unused
+	  variables
+	* [r248] src/common/cert_vfy.c: setup_store(): declare the function
+	  static to avoid a compiler warning
+	  cert_vfy.c:321: warning: no previous prototype for 'setup_store'
+	* [r247] src/common/error.c, src/common/error.h: set_error(): use
+	  const char * to avoid compiler warnings
+	* [r246] src/common/debug.c, src/common/debug.h: debug_print(): use
+	  const char * for file and format arguments to avoid
+	  compiler warnings
+	* [r245] src/scconf/sclex.c: buf_eat_till(): change third argument
+	  to const char * instead of char *
+	  to avoid sclex.c:128: warning: passing argument 3 of
+	  'buf_eat_till'
+	  discards qualifiers from pointer target type
+	* [r244] src/common/Makefile.am, src/common/NSPRerrs.h,
+	  src/common/SECerrs.h, src/common/SSLerrs.h, src/common/alg_st.h,
+	  src/common/algorithm.c, src/common/cert_st.h,
+	  src/common/secutil.h: add missing new files for the NSS patch
+	  included in revision 238
+
+2007-04-11  ludovic.rousseau
+
+	* [r243] src/tools/pkcs11_eventmgr.c: #include <nss/secmod.h> to
+	  avoid compiler warnings
+	* [r242] configure.in: use AC_HELP_STRING() to format the help
+	  message
+	* [r241] src/tools/pkcs11_eventmgr.c: pkcs11_eventmgr.c:502:
+	  attention : passing argument 2 of
+	  ‘load_pkcs11_module’ from incompatible pointer type
+	  
+	  use &ph instead of ph
+	* [r240] src/pam_pkcs11/pam_pkcs11.c: pam_pkcs11.c:393: warning:
+	  label 'auth_failed' defined but not used
+	* [r239] src/mappers/digest_mapper.c: digest_mapper.c:114: warning:
+	  assignment discards qualifiers from
+	  pointer target type
+	* [r238] configure.in, src/common/Makefile.am,
+	  src/common/cert_info.c, src/common/cert_info.h,
+	  src/common/cert_vfy.c, src/common/cert_vfy.h, src/common/debug.c,
+	  src/common/error.h, src/common/pkcs11_lib.c,
+	  src/common/pkcs11_lib.h, src/mappers/Makefile.am,
+	  src/mappers/cn_mapper.c, src/mappers/digest_mapper.c,
+	  src/mappers/generic_mapper.c, src/mappers/krb_mapper.c,
+	  src/mappers/ldap_mapper.c, src/mappers/mail_mapper.c,
+	  src/mappers/mapper.h, src/mappers/ms_mapper.c,
+	  src/mappers/null_mapper.c, src/mappers/opensc_mapper.c,
+	  src/mappers/openssh_mapper.c, src/mappers/pwent_mapper.c,
+	  src/mappers/subject_mapper.c, src/mappers/uid_mapper.c,
+	  src/pam_pkcs11/Makefile.am, src/pam_pkcs11/mapper_mgr.c,
+	  src/pam_pkcs11/mapper_mgr.h, src/pam_pkcs11/pam_config.c,
+	  src/pam_pkcs11/pam_pkcs11.c, src/tools/Makefile.am,
+	  src/tools/pkcs11_eventmgr.c, src/tools/pkcs11_inspect.c,
+	  src/tools/pkcs11_listcerts.c, src/tools/pklogin_finder.c: NSS
+	  patch from Robert Relyea
+	  http://www.opensc-project.org/pipermail/opensc-devel/2007-April/009724.html
+	  
+	  ------------------------------------------------------------------------
+	  Introduction to the pam_pkcs11-nss.patch
+	  
+	  This patch adds compile time support for the NSS crypto
+	  libraries. It
+	  optionally replaces the raw PKCS #11 operations and open SSL
+	  certificate
+	  processing with functionsprovided by the NSS crypto libraries.
+	  This change is
+	  controlled by a configure option, '--with-nss' or
+	  '--without-nss'.
+	  --without-nss is the default. This package requires nss 3.10 as a
+	  minimum.
+	  
+	  When --with-nss is selected, pam_pkcs11 can support the
+	  following:
+	  
+	  1) multiple simultaeous pkcs #11 modules used for authentication.
+	  NSS already
+	  handles multiple smart card handlers running at the same time.
+	  This means you
+	  can configure your box to log in with both CAC and pkcs #12
+	  tokens by loading
+	  both sets of modules. This support must be configured in
+	  pam_pkcs11, otherwise
+	  NSS will only use the user selected pkcs11 module, same as the
+	  current direct
+	  to pkcs #11 support.
+	  
+	  2) Optional OCSP support. This support is built into NSS already.
+	  If you
+	  compile --with-nss, you can simply turn it on.
+	  
+	  3) with --with-nss, pkcs11_eventmgr automatically uses
+	  C_WaitForSlotEvent for
+	  those tokens that support it, and pull for those that don't. (NSS
+	  has this
+	  support built in).
+	  
+	  4) with --with-nss, any cert key type NSS supports will work
+	  correctly (RSA,
+	  DSA, ECDSA, etc).
+	  
+	  5) nss automatically supports part of the certificate chain
+	  stored on the smart
+	  card. This allows you to store a single root certificate in the
+	  database and
+	  keep the intermediates on the token itself.
+	  
+	  6) src/common/rsaref is not need to build any of pam_pkcs11 (if
+	  --with-nss is
+	  used).
+	  
+	  Other differences when --with-nss and --without-nss:
+	  
+	  1) The crl policy is ignored. NSS handles crls automatically
+	  already. It
+	  uses standard external tools to keep crls up-to-date.
+	  
+	  2) The tools will only display user certs, that is certificates
+	  for which the
+	  token claims to hold the private key for.
+	  
+	  The patch itself
+	  
+	  The changes in this patch can be categorized in the following
+	  broad categories:
+	  
+	  1) build changes.
+	  2) interface changes to make the crypto operations more generic.
+	  3) implement the NSS versions of the base crypto functions.
+	  
+	  Changes by file
+	  
+	  ./configure.in:
+	  1. switch between the nss module and the openssl depending on the
+	  state of
+	  --with-nss. (openssl is the default).
+	  2. added environment variables CRYPO_CFLAGS and CRYPTO_LIBS
+	  3. added the AM conditional HAVE_NSS
+	  
+	  ./src/common -- This is where most of the NSS specific code
+	  lives. Basically
+	  the following interface changes were made:
+	  
+	  ./src/common/pkcs11_lib.c ./src/common/pkcs11_lib.h
+	  cert_object_t and pkcs11_handle_t were made opaque handles.
+	  Applications no
+	  longer have direct access to their member functions members are
+	  accessed
+	  through accessor functions. These new accessor functions are:
+	  
+	  find_slot_by_number: Takes a pkcs11_handle_t, an input slot
+	  number, and
+	  returns a generic slot number and success for failure. The input
+	  slot number
+	  is the same 'ones' based index into the SlotList. The generic
+	  slot number is
+	  library specific (NSS now returns the slotID, the non-NSS code
+	  returns the
+	  'zero' based index into the SlotList). If the input slot number
+	  is zero, the
+	  first present smart card is returned.
+	  
+	  get_slot_label: takes a pkcs11_handle_t and returns the label for
+	  the
+	  currently opened slot.
+	  
+	  get_X509_certificate: takes a cert_object_t and returns the X509
+	  Cert. NOTE:
+	  the X509 certificate itself has been made into a generic handle
+	  which could
+	  be either an openssl X509 or an NSS CERTCertificate. see
+	  cert_st.h for more
+	  info.
+	  
+	  crypto_init: This function is called to set up the crypto system.
+	  It takes
+	  a pointer to the cert policy to help setup. While not exactly an
+	  accessor
+	  function, it is new.
+	  
+	  In addition to these accessors, the following existing functions
+	  have changed:
+	  
+	  load_pkcs11_module: now allocates a pkcs11_handle_t and returns
+	  it. Since
+	  pkcs11_handle_t's are opaque, applications no longer know how big
+	  they are,
+	  and therefore can't allocate them from the stack.
+	  
+	  get_certificate_list (was get_certificate): returns an array of
+	  pointers to
+	  cert_object_t's. unlike the short-lived get_certificate_list in
+	  the branch,
+	  this function actually operates as an accessor function. The
+	  returned
+	  certificate list is still 'owned' by the pkcs11_handle_t.
+	  Subsequent calls to
+	  get_certificate_list will return the same array as the previous
+	  calls. The
+	  array is freed automatically when the pkcs11_handle_t is closed
+	  (just as it
+	  is in the original base code). This change was necessary because
+	  pkcs11_handle_t is no longer accessible (it no longer holds the
+	  same data in
+	  the different implementations).
+	  
+	  get_private_key: takes a handle to a cert_object_t. It looks up
+	  the private
+	  key for that object and returns failure if it can't find it. This
+	  change is
+	  because the patch gets rid of the chosen cert field. Applications
+	  chose the
+	  cert and pass the cert directly into this and the sign function.
+	  
+	  sign_value: takes a cert_object_t. If the cert_object_t does not
+	  have a
+	  private key, then sign_value will fail. If get_private_key was
+	  not called on
+	  cert_object_t at some time in the past, sign_value will
+	  automatically call
+	  it. This change was also motivated by the removal of the
+	  chosen_cert field.
+	  
+	  Another way of implementing the get_private_key/sign_value is to
+	  create an
+	  new chosen cert accessor function and reverting the
+	  implementation for these
+	  two functions. The new APIs, however, allow for multiple certs to
+	  sign in a
+	  single pkcs11_handle_t context.
+	  
+	  ./src/common/cert_st.h ./src/common/cert_info.h
+	  ./src/common/cert_vfy.h
+	  The only interface changes here are:
+	  1) adding nss_dir and ocsp_policy to cert_policy_st.
+	  2) changing the definition of X509 depending on whether which
+	  cert library
+	  we are using (X509 for openSSL, CERTCertificate or NSS). The use
+	  of a
+	  #define here limitted the extent of the patch in other modules.
+	  3) generic defines for algorithm types.
+	  4) addition of 3 new CERT_Info types. (Issuer, serial number, key
+	  algorithm).
+	  
+	  cert_st.h is a new function, which other files can include in
+	  place of
+	  <openssl/x509.h>
+	  
+	  ./src/common/cert_info.c ./src/common/cert_vfy.c
+	  These basically accepted the new NSS implementations for the
+	  certificate
+	  verify and info functions. These patches are relatively straight
+	  forward.
+	  The original API did not need any tweaking.
+	  
+	  ./src/common/algorithm.c ./src/common/alg_st.h
+	  These new files provide generic API's to do access the hash
+	  algorithm to
+	  pass to cert_info. If access to actual hashing or crypto were
+	  needed, the new functions could be added here. Like cert_st.h,
+	  alg_st.h
+	  replaces the use of <openssl/evp.h>
+	  
+	  ./src/common/NSPRerrs.h ./src/common/SECerrs.h
+	  ./src/common/secutil.h
+	  ./src/common/SSLerrs.h
+	  These new files provide the NSS error message mappings.
+	  
+	  Changes in ./src/common make up about 65% of the patch.
+	  
+	  
+	  ./src/mappers/*.c
+	  The mapper functions were changes to use the generic form of
+	  hashing defined
+	  in alg_st.h. (mostly replacing <openssl/x509v3.h> with cert_st.h
+	  and NULL
+	  in cert_info with ALGORITHM_NULL).
+	  
+	  exceptions: opensc_mapper.c and oopenssh_mapper.c are not
+	  implemented for
+	  NSS because of the use of BIO directly.
+	  
+	  These changes make up less than 10 % of the patch.
+	  
+	  ./src/pam_pkcs11/pam_config.c
+	  Added support to fetch nss_dir and ocsp_policy.
+	  
+	  ./src/pam_pkcs11/pam_pkcs11.c
+	  Change to use the new API. These changes include:
+	  1) calling the new crypto_init function instead of the various
+	  openSSL
+	  init functions.
+	  2) pam_pkcs11 now holds a pointer to the pkcs11_handle_t rather
+	  than a static
+	  version. A large number of diffs are simply changing &ph to ph.
+	  3) Use the accessor functions to get the slotnum and the cert
+	  list.
+	  4) chosen_cert is now a local variable rather than a field in
+	  pkcs11_handle_t
+	  5) move pkcs11_login back before the get_certificate_list. Some
+	  tokens need
+	  be to authenticated before we can read the certificates. More
+	  importantly,
+	  the NSS cert code is only returning user certificates
+	  (certificates with the
+	  private keys). Only a small number of tokens know now to identify
+	  user
+	  certificates if you aren't logged in. Since this change is a
+	  reversion of
+	  a previous change in this version of pam_pkcs11, we may need to
+	  do more
+	  to reconcile it. Perhaps putting explicit #ifdef HAVE_NSS around
+	  the early
+	  login, adding a later login with #ifndef HAVE_NSS.
+	  6) the get_private_key call was moved into sign_value, so it's
+	  removed
+	  from pam_pkcs11 itself. It would be easy to revert this change
+	  and continue
+	  to call get_private_key directly.
+	  
+	  
+	  ./src/tools/pkcs11_eventmgr.c
+	  pkcs11_eventmgr is basically 2 implementations of the
+	  pkcs11_eventmgr
+	  stitched together with ifdefs. A reasonable todo would be to
+	  build the
+	  proper generic interfaces to have a 'clean' pkcs11_eventmgr and
+	  hide the
+	  details in src/common/pkcs11_lib.c like we do with all the rest.
+	  The existing
+	  code doesn't even use the generic init calls that already exist.
+	  
+	  ./src/tools/*.c [the rest]
+	  The same type of generic changes made to pam_pkcs11.c
+
+2007-04-04  ludovic.rousseau
+
+	* [r237] src/common/debug.c, src/common/debug.h: svn propset
+	  svn:keywords Id
+	* [r236] src/common/debug.c, src/common/debug.h: use $Id:$ instead
+	  of $Id$
+	* [r235] src/tools/pkcs11_inspect.c: use ERR() (instead of DBG())
+	  in case of errors
+	* [r234] src/common/debug.c, src/common/debug.h: add support for
+	  ERR?() macros
+	* [r233] Makefile.am, configure.in, doc/mappers_api.xml,
+	  src/common/base64.h, src/common/cert_info.c,
+	  src/common/cert_info.h, src/common/cert_vfy.c,
+	  src/common/cert_vfy.h, src/common/error.c, src/common/error.h,
+	  src/common/pkcs11_lib.c, src/common/pkcs11_lib.h,
+	  src/common/rsaref/pkcs11.h, src/common/strings.c,
+	  src/common/strings.h, src/common/uri.c, src/common/uri.h,
+	  src/mappers/cn_mapper.c, src/mappers/cn_mapper.h,
+	  src/mappers/digest_mapper.c, src/mappers/digest_mapper.h,
+	  src/mappers/generic_mapper.c, src/mappers/generic_mapper.h,
+	  src/mappers/krb_mapper.c, src/mappers/krb_mapper.h,
+	  src/mappers/ldap_mapper.c, src/mappers/ldap_mapper.h,
+	  src/mappers/mail_mapper.c, src/mappers/mail_mapper.h,
+	  src/mappers/mapper.c, src/mappers/mapper.h,
+	  src/mappers/mapperlist.c, src/mappers/mapperlist.h,
+	  src/mappers/ms_mapper.c, src/mappers/ms_mapper.h,
+	  src/mappers/null_mapper.c, src/mappers/null_mapper.h,
+	  src/mappers/opensc_mapper.c, src/mappers/opensc_mapper.h,
+	  src/mappers/openssh_mapper.c, src/mappers/openssh_mapper.h,
+	  src/mappers/pwent_mapper.c, src/mappers/pwent_mapper.h,
+	  src/mappers/subject_mapper.c, src/mappers/subject_mapper.h,
+	  src/mappers/uid_mapper.c, src/mappers/uid_mapper.h,
+	  src/pam_pkcs11/Makefile.am, src/pam_pkcs11/mapper_mgr.c,
+	  src/pam_pkcs11/mapper_mgr.h, src/pam_pkcs11/pam_config.c,
+	  src/pam_pkcs11/pam_config.h, src/pam_pkcs11/pam_pkcs11.c,
+	  src/scconf/internal.h, src/scconf/lex-parse.l,
+	  src/scconf/parse.c, src/scconf/scconf.c, src/scconf/scconf.h,
+	  src/scconf/sclex.c, src/scconf/write.c,
+	  src/tools/card_eventmgr.c, src/tools/pkcs11_inspect.c,
+	  src/tools/pkcs11_listcerts.c, src/tools/pklogin_finder.c,
+	  tools/Makefile.am, tools/make_hash_link.sh: Set svn:keywords Id
+	  property to replace $Id$
+	* [r232] src/tools/pkcs11_inspect.c: display the lib name in case
+	  of loading error
+	* [r231] src/mappers/Makefile.am, src/pam_pkcs11/Makefile.am,
+	  src/tools/Makefile.am: use $(FOO) instead of @FOO@
+
+2006-03-16  aj
+
+	* [r230] configure.in: simply the revision, drop the m4 code.
+	  it didn't turn out the way I wanted it
+	  (does not contain the _repository_/_branch_ revision).
+
+2006-01-22  aj
+
+	* [r229] pam_pkcs11.spec: change to opensc-project till opensc.org
+	  dns is back.
+	* [r228] doc/README.mappers, doc/export-wiki.sh,
+	  doc/mappers_api.xml, doc/pam_pkcs11.xml: move to opensc-project
+	  till opensc.org dns is back.
+
+2006-01-03  ludovic.rousseau
+
+	* [r227] configure.in: substitute Revision keyword
+
+2006-01-02  jonsito
+
+	* [r226] configure.in, doc/Makefile.am, doc/doxygen.conf,
+	  doc/doxygen.conf.in: use svn revision based version numbers
+
+2005-12-23  jonsito
+
+	* [r225] etc/pam_pkcs11.conf.example, src/common/cert_vfy.c: Add
+	  either file or hashdir support for CACerts and local CRL's
+	* [r224] src/common/uri.c, src/common/uri.h: Add comodity functions
+	  for pathname checks
+
+2005-12-15  jonsito
+
+	* [r223] src/tools/pkcs11_listcerts.c: Make pkcs11_listcerts more
+	  verbose
+	* [r222] src/common/pkcs11_lib.c, src/common/pkcs11_lib.h,
+	  src/pam_pkcs11/pam_pkcs11.c, src/tools/pkcs11_inspect.c,
+	  src/tools/pkcs11_listcerts.c, src/tools/pklogin_finder.c:
+	  Improved extraction of Certificates and Private Keys
+	* [r221] src/common/pkcs11_lib.h, src/common/rsaref/pkcs11.h: move
+	  key_object_t, slot_t and pkcs11_handle_t to pkcs11_lib.h as they
+	  are not part of standard RSA headers
+
+2005-12-12  jonsito
+
+	* [r220] aclocal, aclocal/acx_pthread.m4,
+	  etc/pam_pkcs11.conf.example, src/common/pkcs11_lib.c,
+	  src/common/pkcs11_lib.h, src/common/rsaref/pkcs11.h,
+	  src/pam_pkcs11/pam_config.c, src/pam_pkcs11/pam_config.h,
+	  src/pam_pkcs11/pam_pkcs11.c, src/tools/pkcs11_inspect.c,
+	  src/tools/pkcs11_listcerts.c, src/tools/pklogin_finder.c: Runtime
+	  config option for non-null C_Initialize() argument
+
+2005-12-12  ludovic.rousseau
+
+	* [r219] configure.in, src/common/Makefile.am: do not redefine LIBS
+	  and CFLAGS in configure.in but use PTHREAD_LIBS and
+	  PTHREAD_CFLAGS in Makefile.am when needed instead
+	* [r218] configure.in: do not use AC_DEFINE(HAVE_PTHREAD, 1, ...)
+	  since it is already done by
+	  ACX_PTHREAD() if its first argument is not defined
+
+2005-12-12  jonsito
+
+	* [r217] aclocal, aclocal/acx_pthread.m4, configure.in,
+	  src/common/pkcs11_lib.c: Add native thread support for
+	  C_Initialize
+
+2005-12-10  jonsito
+
+	* [r216] src/common/pkcs11_lib.c, src/pam_pkcs11/pam_pkcs11.c,
+	  src/tools/pkcs11_listcerts.c: Bugfixes + make pkcs11_listcerts
+	  behaviour closer to pam module to ease debug
+	* [r215] src/pam_pkcs11/pam_pkcs11.c: pam module only calls C_Login
+	  when really needed
+	* [r214] src/tools/pkcs11_listcerts.c: Stupid bug in dbg output at
+	  pkcs11_listcerts
+
+2005-12-09  jonsito
+
+	* [r213] src/tools/pkcs11_inspect.c: pkcs11_inspect now uses
+	  get_certificate_list()
+	* [r212] src/tools/pkcs11_listcerts.c, src/tools/pklogin_finder.c:
+	  pklogin_finder now uses get_certificate_list()
+	* [r211] src/tools/Makefile.am, src/tools/pkcs11_listcerts.c: Add
+	  pkcs11_listcerts tool to enumerate card certificates
+	* [r210] src/common/pkcs11_lib.c, src/common/pkcs11_lib.h: Add
+	  get_certificate_list() to common/pkcs11_lib.c
+	* [r209] src/common/cert_info.c, src/common/cert_info.h,
+	  src/mappers/opensc_mapper.c: Move add_cert() from
+	  mappers/opensc_mapper.c to common/cert_info.c
+
+2005-12-05  jonsito
+
+	* [r208] doc/pam_pkcs11.xml: Documentation updates
+	* [r207] src/common/cert_vfy.c, src/common/cert_vfy.h,
+	  src/pam_pkcs11/pam_config.c, src/pam_pkcs11/pam_config.h,
+	  src/pam_pkcs11/pam_pkcs11.c, src/tools/pkcs11_inspect.c,
+	  src/tools/pklogin_finder.c: Perform/skip CA check acording to
+	  configuration file
+	* [r206] src/pam_pkcs11/pam_pkcs11.c: Perform/Skip signature check
+	  according configuration file
+	* [r205] etc/pam.d_login.example, etc/pam_pkcs11.conf.example,
+	  src/common/cert_vfy.h, src/pam_pkcs11/pam_config.c,
+	  src/pam_pkcs11/pam_config.h, src/pam_pkcs11/pam_pkcs11.c,
+	  src/tools/pkcs11_inspect.c, src/tools/pklogin_finder.c: Prepare
+	  for configurable ca,crl,and signature verification
+	* [r204] src/tools/pkcs11_inspect.c, src/tools/pklogin_finder.c:
+	  Get tools using pkcs11_pass_login()
+	* [r203] src/common/pkcs11_lib.c, src/common/pkcs11_lib.h: Add
+	  pkcs11_pass_login() method to pkcs11_lib
+
+2005-12-01  jonsito
+
+	* [r202] configure.in: Comment libp11 stuff in configure.in
+	* [r201] src/common/Makefile.am, src/common/pkcs11.c,
+	  src/common/pkcs11_lib.c, src/common/pkcs11_lib.h,
+	  src/pam_pkcs11/pam_pkcs11.c, src/tools/pkcs11_eventmgr.c,
+	  src/tools/pkcs11_inspect.c: Rename pkcs11.c to pkcs11_lib.c and
+	  add hheader file
+
+2005-11-30  jonsito
+
+	* [r200] src/common/rsaref/PKCS11_README: Minor change to
+	  rsaref/pkcs11_readme
+	* [r199] configure.in, src/common/Makefile.am, src/common/pkcs11.c,
+	  src/common/pkcs11.h, src/common/pkcs11f.h, src/common/pkcs11t.h,
+	  src/common/rsaref, src/common/rsaref/Makefile.am,
+	  src/common/rsaref/PKCS11_README, src/common/rsaref/pkcs11.h,
+	  src/common/rsaref/pkcs11f.h, src/common/rsaref/pkcs11t.h,
+	  src/pam_pkcs11/pam_pkcs11.c, src/tools/pkcs11_eventmgr.c,
+	  src/tools/pkcs11_inspect.c, src/tools/pklogin_finder.c: Move
+	  rsaref files to an independent directory
+	* [r198] configure.in: Add libp11 support to configure.in
+
+2005-11-14  ludovic.rousseau
+
+	* [r197] src/common/debug.c: debug_print(): use syslog(3) instead
+	  of printf() when stdout is not a
+	  tty, for example when using gdm.
+
+2005-10-03  ludovic.rousseau
+
+	* [r196] doc/pam_pkcs11.xml: rephrase the a "Secure your PAM
+	  configuration" paragraph
+
+2005-09-29  ludovic.rousseau
+
+	* [r195] bootstrap: create an empty aclocal directory
+	* [r194] configure.in: use AC_HELP_STRING
+	* [r193] Makefile.am, aclocal, configure.in: files in aclocal/ are
+	  not used
+	* [r192] configure.in: check for OPENSSL before PCSC since the
+	  first PKG_CHECK_MODULES() shall
+	  not be in an if or some variables will not be initialized
+	* [r191] configure.in: improve detection code for PCSC
+	* [r190] etc/pam_pkcs11.conf.example, src/mappers/Makefile.am: The
+	  generic_mapper.so is not a external lib anymore (by default) but
+	  is
+	  internal. Update the configuration sample file to reflect that.
+	  
+	  Closes ticket #9 "Generic mapper is statically linked by default
+	  -
+	  config not in sync". Thanks to Ville Skyttä for the bug and
+	  patch.
+	* [r189] etc/digest_mapping.example, etc/mail_mapping.example,
+	  etc/subject_mapping.example: comment out example configuration
+	  lines so the files can be directly
+	  installed by distribution packages.
+	  
+	  Closes ticket #10. Thanks to Ville Skyttä for the bug report and
+	  patch
+	* [r188] doc/mappers_api.html, doc/pam_pkcs11.html: removed since
+	  they are generated from the .xml version and are available
+	  from http://www.opensc.org/doc/pam_pkcs11/pam_pkcs11.html and
+	  http://www.opensc.org/doc/pam_pkcs11/mappers_api.html
+	* [r187] doc/pkcs11_eventmgr.1: remove a ' ' before ']'
+
+2005-09-27  ludovic.rousseau
+
+	* [r186] doc/pam_pkcs11.css: play with colors
+	* [r185] doc/pam_pkcs11.html: regenerate
+	* [r184] doc/pam_pkcs11.xml: corrections
+
+2005-09-26  ludovic.rousseau
+
+	* [r183] src/tools/card_eventmgr.c: Use LPSTR instead of LPTSTR to
+	  compile with pcsc-lite 1.2.0
+	  
+	  Thanks to Ville Skytta for the bug report
+
+2005-09-14  ludovic.rousseau
+
+	* [r182] doc/export-wiki.sh: use -nv instead of --non-verbose since
+	  wget 1.10 now uses --no-verbose
+	  instead. Grr!
+
+2005-09-13  ludovic.rousseau
+
+	* [r181] configure.in: Do not just use PKG_CHECK_MODULES() to test
+	  the presence of pcsc-lite
+	  but also check for winscard.h and libpcsclite
+	  
+	  Some distributions do not provide libpcsclite.pc (like SuSE 9.3)
+
+2005-09-10  jonsito
+
+	* [r178] src/common/cert_info.c, src/common/uri.c,
+	  src/mappers/ldap_mapper.c, src/mappers/null_mapper.c,
+	  src/mappers/opensc_mapper.c, src/mappers/openssh_mapper.c,
+	  src/pam_pkcs11/mapper_mgr.c, src/pam_pkcs11/pam_config.c,
+	  src/tools/card_eventmgr.c, src/tools/pkcs11_eventmgr.c: Many
+	  fixes to get 'gcc -Wall -pedantic' friendly
+
+2005-09-08  jonsito
+
+	* [r177] Makefile.am, bootstrap, doc/Makefile.am,
+	  src/common/Makefile.am, src/mappers/Makefile.am,
+	  src/pam_pkcs11/Makefile.am, src/tools/Makefile.am: Patches from
+	  AJ to sync to all others OpenSC projects
+	* [r176] ChangeLog, NEWS, doc/README.mappers: Changelog NEWS and
+	  README's updates
+
+2005-09-07  jonsito
+
+	* [r175] AUTHORS: Add Ville Skytta to AUTHORS (original
+	  pam_pkcs11.spec file)
+	* [r174] pam_pkcs11.spec: More changes to 'pam_pkcs11.spec' from
+	  FC4 team
+	* [r173] pam_pkcs11.spec: Fix license to be LGPL in pam_pkcs11.spec
+	  file
+	* [r172] pam_pkcs11.spec: pam_pkcs11.spec: create independent
+	  'pam_pkcs11-ldap' package
+	* [r171] src/mappers/ldap_mapper.c: Changed 'LDAP_SCOPE_SUB' to
+	  'LDAP_SCOPE_SUBTREE' in ldap_mapper.c
+
+2005-09-07  ludovic.rousseau
+
+	* [r170] doc/mappers_api.html: regenerate
+	* [r169] doc/pam_pkcs11.html: regenerate
+
+2005-09-07  jonsito
+
+	* [r168] TODO: More 'TODO' updates
+	* [r167] ChangeLog: Changelog updates
+	* [r166] TODO: 'TODO' roadmap updated
+	* [r165] AUTHORS, src/mappers/ldap_mapper.c: ldap_mapper.c: add
+	  finder() and entries() methods. Update AUTHORS file
+	* [r164] src/mappers/opensc_mapper.c: opensc_mapper.c: Fixes in
+	  comments and debug output
+	* [r163] configure.in: configure.in: Add '-lldap' and '-lcurl' to
+	  LIBS when needed
+	* [r162] doc, docs: rename 'docs' to 'doc'
+	* [r161] Makefile.am, configure.in, docs/doxygen.conf,
+	  docs/generate-api.sh, pam_pkcs11.spec: Change files to use
+	  directory 'doc' instead of 'docs'
+	* [r160] src/mappers/ldap_mapper.c: missing #endif in ldap_mapper.c
+	* [r159] configure.in: Set cURL,LDAP,DocBook as configure options
+	  in configure.in
+	* [r158] etc/pam_pkcs11.conf.example: Update ldap mapper
+	  configuration data in pam_pkcs11.conf.example
+	* [r157] src/common/uri.c: Add src/common/uri.c conditional
+	  compilation of cURL and LDAP support
+	* [r156] src/mappers/ldap_mapper.c: Preliminary version of LDAP
+	  mapper
+	* [r155] src/mappers/Makefile.am, src/mappers/mapperlist.c: Compile
+	  LDAP mapper only if ldap support is included
+	* [r154] src/mappers/openssh_mapper.c: Fix
+	  /home/jantonio/.ssh/authorized_keys filename generation
+	* [r153] src/scconf/Makefile.am: Add header files to
+	  libscconf_la_SOURCES in src/scconf/Makefile.am
+
+2005-09-06  jonsito
+
+	* [r152] docs/Makefile.am, docs/README.ldap_mapper: Add
+	  README.ldap_mapper documentation file
+	* [r151] src/mappers/openssh_mapper.c: OpenSSH mapper: move
+	  auth_keys filename composition out of key parsing routines
+	* [r150] src/common/cert_info.c: Add email if found to ssh-pubk
+	  output of openssh_mapper::inspect()
+
+2005-09-05  jonsito
+
+	* [r149] docs/mappers_api.xml, src/common/base64.c,
+	  src/common/base64.h, src/common/cert_info.c,
+	  src/mappers/openssh_mapper.c, src/pam_pkcs11/mapper_mgr.c:
+	  cert_info.c::cert_info_sshpuk() fixed. OpenSSH mapper written
+	* [r148] src/common/base64.c, src/common/cert_vfy.c: Remove
+	  redundant base64_to_bin() at cert_vfy.c
+
+2005-09-05  ludovic.rousseau
+
+	* [r147] docs/export-wiki.sh, docs/generate-api.sh: make
+	  export-wiki.sh and generate-api.sh executable
+
+2005-09-03  jonsito
+
+	* [r146] docs/mappers_api.xml, src/common/Makefile.am,
+	  src/common/base64.c, src/common/base64.h, src/common/uri.c: Add
+	  base64 API encoding functions to properly handle rsa-ssh keys
+	* [r145] docs/mappers_api.xml, src/common/cert_vfy.c,
+	  src/common/cert_vfy.h, src/mappers/mapper.h: mapper.h
+	  cert_vfy.[ch] doxygen updates. Mapper api doc updates
+	* [r144] src/common/cert_info.c, src/common/cert_info.h,
+	  src/common/uri.c, src/common/uri.h: Make cert_info.[ch] and
+	  uri.[ch] doxygen aware
+	* [r143] docs/doxygen.conf, src/common/debug.h, src/common/error.c,
+	  src/common/error.h: Make error.[ch] and debug.[ch] doxygen aware
+
+2005-09-02  jonsito
+
+	* [r142] docs/doxygen.conf, src/common/strings.h: Make
+	  src/common/string.h doxygen friendly
+	* [r141] Makefile.am, docs/Makefile.am, docs/doxygen.conf,
+	  docs/export-wiki.sh, docs/export-wiki.xsl, docs/generate-api.sh:
+	  added doxygen API documentation at 'make dist'
+	* [r140] Makefile.am, aclocal/Makefile.am, docs/Makefile.am,
+	  etc/Makefile.am, src/Makefile.am, src/common/Makefile.am,
+	  src/mappers/Makefile.am, src/pam_pkcs11/Makefile.am,
+	  src/scconf/Makefile.am, src/tools/Makefile.am, tools/Makefile.am:
+	  Do 'make maintainer-clean' work according OpenSC Team convention
+
+2005-09-01  jonsito
+
+	* [r139] pam_pkcs11.spec, src/pam_pkcs11/Makefile.am: Revert
+	  install path of pam_pkcs11.so as broke some 'make distcheck'
+	* [r138] ChangeLog: ChangeLog updated
+	* [r137] AUTHORS, src/mappers/opensc_mapper.c: OpenSC mapper
+	  implementation based on AJ's pam_opensc source code
+	* [r136] src/pam_pkcs11/Makefile.am: Do not install pam_pkcs11.la
+	  and pam_pkcs11.a
+	* [r135] pam_pkcs11.spec, src/pam_pkcs11/Makefile.am: pam_pkcs11.so
+	  to be installed under /lib/security instead of /usr/lib/security
+	* [r134] pam_pkcs11.spec: pam_pkcs11.spec updates: create
+	  pam_pkcs11 and pam_pkcs11-pcsc RPM packages
+
+2005-08-31  jonsito
+
+	* [r133] docs/pam_pkcs11.html, docs/pam_pkcs11.xml: Updated
+	  pam_pkcs11.xml to reflect changes in mapper API and doc
+	* [r132] docs/mappers_api.html, etc/pam_pkcs11.conf.example,
+	  src/mappers/Makefile.am, src/mappers/ldap_mapper.c,
+	  src/mappers/pwent_mapper.c: Set to be statically linked those
+	  mappers that no depends on external libraries
+	* [r131] docs/mappers_api.html, docs/mappers_api.xml: Mapper API
+	  documentation writting finished
+	* [r130] docs/mappers_api.html, docs/mappers_api.xml: Fixed sample
+	  code in Mapper API doc
+	* [r129] docs/mappers_api.html, docs/mappers_api.xml: More work in
+	  Mapper API documentation...
+	* [r128] src/pam_pkcs11/mapper_mgr.c: Assume static mapper with
+	  default settings when no mapper configuration block is provided
+	* [r127] src/mappers/mapper.h, src/pam_pkcs11/mapper_mgr.c: Proper
+	  handling of debug_level on enter/exit mapper(s) code
+
+2005-08-31  ludovic.rousseau
+
+	* [r126] docs/pam_pkcs11.html, docs/pam_pkcs11.xml: add a HOWTO
+	  chapter
+	* [r125] etc/card_eventmgr.conf.example,
+	  etc/pkcs11_eventmgr.conf.example: remove paths from the executed
+	  commands
+	* [r124] src/pam_pkcs11/pam_pkcs11.c: pam_sm_authenticate(): check
+	  if DISPLAY is defined before checking if it
+	  is a local or remote login
+
+2005-08-31  jonsito
+
+	* [r123] docs/mappers_api.html, docs/mappers_api.xml,
+	  src/common/debug.c, src/common/debug.h, src/mappers/mapper.h:
+	  Mapper API documentation update
+
+2005-08-31  ludovic.rousseau
+
+	* [r122] src/pam_pkcs11/mapper_mgr.c: inspect_certificate(): print
+	  "Printing data for mapper %s" on stdout
+	  instead of debug output.
+	* [r121] src/common/debug.h: add definition of DBG5 if no debug is
+	  used
+
+2005-08-31  jonsito
+
+	* [r120] docs/pam_pkcs11.html, etc/pam_pkcs11.conf.example,
+	  src/mappers/cn_mapper.c, src/mappers/digest_mapper.c,
+	  src/mappers/generic_mapper.c, src/mappers/krb_mapper.c,
+	  src/mappers/mail_mapper.c, src/mappers/ms_mapper.c,
+	  src/mappers/null_mapper.c, src/mappers/opensc_mapper.c,
+	  src/mappers/openssh_mapper.c, src/mappers/pwent_mapper.c,
+	  src/mappers/subject_mapper.c, src/mappers/uid_mapper.c,
+	  src/pam_pkcs11/mapper_mgr.c: Set default values in mappers.
+	  Config file fixes
+
+2005-08-31  ludovic.rousseau
+
+	* [r119] src/tools/Makefile.am: @LIBMAPPERS@ already includes
+	  @LIBSCCONF@ @LIBCOMMON@ and @OPENSSL_LIBS@
+	* [r118] src/pam_pkcs11/Makefile.am: @LIBMAPPERS@ alredy include
+	  @LIBSCCONF@ @LIBCOMMON@ so we can remove
+	  them here
+	* [r117] src/mappers/Makefile.am: libmappers.la uses functions from
+	  scconf/ and common/ so we link with
+	  these libraries
+	* [r116] src/common/Makefile.am: libcommon_la_LIBADD =
+	  @OPENSSL_LIBS@
+	  
+	  We use OpenSSL so we link with it
+	* [r115] src/pam_pkcs11/mapper_mgr.c: load_module(): initialise res
+	  variable to NULL to avoid a compiler warning
+	* [r114] src/tools/pkcs11_eventmgr.c: default OpenSC module is now
+	  /usr/lib/opensc-pkcs11.so
+	* [r113] etc/card_eventmgr.conf.example,
+	  etc/pkcs11_eventmgr.conf.example: improve comments
+
+2005-08-30  jonsito
+
+	* [r112] docs/mappers_api.html, docs/mappers_api.xml: Mapper API
+	  manual update
+	* [r111] docs/mappers_api.html, docs/mappers_api.xml,
+	  src/mappers/cn_mapper.c, src/mappers/cn_mapper.h,
+	  src/mappers/digest_mapper.c, src/mappers/digest_mapper.h,
+	  src/mappers/generic_mapper.c, src/mappers/generic_mapper.h,
+	  src/mappers/krb_mapper.c, src/mappers/krb_mapper.h,
+	  src/mappers/ldap_mapper.c, src/mappers/ldap_mapper.h,
+	  src/mappers/mail_mapper.c, src/mappers/mail_mapper.h,
+	  src/mappers/mapper.h, src/mappers/mapperlist.c,
+	  src/mappers/mapperlist.h, src/mappers/ms_mapper.c,
+	  src/mappers/ms_mapper.h, src/mappers/null_mapper.c,
+	  src/mappers/null_mapper.h, src/mappers/opensc_mapper.c,
+	  src/mappers/opensc_mapper.h, src/mappers/openssh_mapper.c,
+	  src/mappers/openssh_mapper.h, src/mappers/pwent_mapper.c,
+	  src/mappers/pwent_mapper.h, src/mappers/subject_mapper.c,
+	  src/mappers/subject_mapper.h, src/mappers/uid_mapper.c,
+	  src/mappers/uid_mapper.h, src/pam_pkcs11/mapper_mgr.c,
+	  src/pam_pkcs11/mapper_mgr.h: Simplify and optimize mapper
+	  interface
+
+2005-08-30  ludovic.rousseau
+
+	* [r110] docs/pam_pkcs11.xml: update
+
+2005-08-30  jonsito
+
+	* [r109] docs/mappers_api.html: add mappers_api.html to svn tarball
+	* [r108] docs/Makefile.am: stupid bug in docs/Makefile.am
+	* [r107] docs/Makefile.am, docs/mappers_api.xml: Add Mappers API
+	  documentation (wip)
+	* [r106] src/common/cert_info.c, src/common/strings.c,
+	  src/mappers/Makefile.am, src/mappers/opensc_mapper.c,
+	  src/mappers/openssh_mapper.c, src/tools/card_eventmgr.c,
+	  src/tools/pkcs11_eventmgr.c: Fixes for some '-Wall -pedantic'
+	  warnings
+
+2005-08-29  jonsito
+
+	* [r105] src/mappers/Makefile.am, src/mappers/cn_mapper.h,
+	  src/mappers/digest_mapper.h, src/mappers/generic_mapper.h,
+	  src/mappers/krb_mapper.h, src/mappers/ldap_mapper.h,
+	  src/mappers/mail_mapper.h, src/mappers/mapperlist.c,
+	  src/mappers/mapperlist.h, src/mappers/ms_mapper.h,
+	  src/mappers/null_mapper.c, src/mappers/null_mapper.h,
+	  src/mappers/opensc_mapper.h, src/mappers/openssh_mapper.h,
+	  src/mappers/pwent_mapper.h, src/mappers/subject_mapper.h,
+	  src/mappers/uid_mapper.h, src/tools/Makefile.am: Bugfixes on
+	  compiling some static mappers
+	* [r104] src/mappers/cn_mapper.c, src/mappers/digest_mapper.c,
+	  src/mappers/generic_mapper.c, src/mappers/krb_mapper.c,
+	  src/mappers/ldap_mapper.c, src/mappers/mail_mapper.c,
+	  src/mappers/mapper.h, src/mappers/ms_mapper.c,
+	  src/mappers/null_mapper.c, src/mappers/opensc_mapper.c,
+	  src/mappers/openssh_mapper.c, src/mappers/pwent_mapper.c,
+	  src/mappers/subject_mapper.c, src/mappers/uid_mapper.c: Mappers
+	  now supports static linking
+	* [r103] src/mappers/Makefile.am, src/mappers/cn_mapper.h,
+	  src/mappers/digest_mapper.h, src/mappers/generic_mapper.h,
+	  src/mappers/krb_mapper.h, src/mappers/ldap_mapper.h,
+	  src/mappers/mail_mapper.h, src/mappers/mapperlist.c,
+	  src/mappers/ms_mapper.h, src/mappers/null_mapper.h,
+	  src/mappers/opensc_mapper.h, src/mappers/openssh_mapper.h,
+	  src/mappers/pwent_mapper.h, src/mappers/subject_mapper.h,
+	  src/mappers/uid_mapper.h: Adding mappers header files
+	* [r102] docs/pam_pkcs11.html, src/mappers/Makefile.am: Move
+	  mapper.[ch] to libmapper
+
+2005-08-29  ludovic.rousseau
+
+	* [r101] docs/pam_pkcs11.xml: change official site URL to
+	  http://www.opensc.org/pam_pkcs11/
+	* [r100] docs/pam_pkcs11.xml: remove empty lines in <userinput>
+	  parts
+	* [r99] docs/pam_pkcs11.xml: chapter 3. Fundamentals: include the
+	  reference in the text instead as a
+	  footnote
+	* [r98] docs/Makefile.am: add section numbering
+	* [r97] docs/pam_pkcs11.xml: chapter 2. Introduction: include the
+	  references in the text instead as
+	  footnote
+	* [r96] docs/pam_pkcs11.xml: use <email></email> instead of &lt;
+	  &gt; for emails
+
+2005-08-29  jonsito
+
+	* [r95] configure.in, src/Makefile.am, src/mappers/Makefile.am,
+	  src/mappers/mapper.h, src/mappers/mapperlist.c,
+	  src/mappers/mapperlist.h, src/mappers/null_mapper.c,
+	  src/pam_pkcs11/Makefile.am, src/pam_pkcs11/mapper_mgr.c,
+	  src/tools/Makefile.am: Preliminary work on statically linked
+	  mappers
+
+2005-08-29  ludovic.rousseau
+
+	* [r94] docs/card_eventmgr.1: minor editing
+	* [r93] docs/pklogin_finder.1: minor editing
+	* [r92] docs/pkcs11_inspect.1: minor editing
+	* [r91] docs/pam_pkcs11.8: remove the NOTE about running the lib as
+	  root using a suid bit.
+	  You should not do that.
+	* [r90] docs/pam_pkcs11.8: improve style
+	* [r89] etc/pam_pkcs11.conf.example: OpenSC PKCS#11 lib is now
+	  /usr/lib/opensc-pkcs11.so instead of
+	  /usr/lib/pkcs11/opensc-pkcs11.so
+
+2005-07-05  ludovic.rousseau
+
+	* [r88] docs/Makefile.am: remove 'MAINTAINERCLEANFILES =
+	  pam_pkcs11.html' as pam_pkcs11.html is
+	  stored in subversion and should not be removed
+	* [r87] src/mappers/Makefile.am, src/tools/Makefile.am: use
+	  @OPENSSL_CFLAGS@ and @OPENSSL_LIBS@
+	* [r86] src/pam_pkcs11/Makefile.am: use @OPENSSL_CFLAGS@ and
+	  @OPENSSL_LIBS@
+	* [r85] configure.in: use PKG_CHECK_MODULES to find OpenSSL
+	* [r84] src/tools/card_eventmgr.c: remove test on HAVE_PCSC_OLD,
+	  old pcsc-lite is not more supported
+	* [r83] src/tools/Makefile.am: do not compile card_eventmgr if
+	  pcsc-lite is not installed
+	* [r82] configure.in: greatly simplify the detection of pcsc-lite
+	  
+	  define HAVE_PCSC to allow conditional compilation (do not compile
+	  tools
+	  using pcsc-lite if pcsc-lite is not installed)
+	* [r81] src/pam_pkcs11/pam_pkcs11.c: pam_sm_authenticate(): fail if
+	  the user is remote (XMDCP)
+
+2005-06-13  jonsito
+
+	* [r80] aclocal/openssl.m4: Support for nonstandard openssl paths
+	  (openssl.m4 missing)
+	* [r79] aclocal/Makefile.am, configure.in: Support for nonstandard
+	  openssl paths
+
+2005-06-09  jonsito
+
+	* [r78] src/mappers/opensc_mapper.c, src/mappers/openssh_mapper.c:
+	  Preliminary work on OpenSC mapper
+	* [r77] docs/pam_pkcs11.html: Updated User Manual
+	* [r76] ChangeLog: Updated ChangeLog
+	* [r75] src/common/cert_info.c, src/common/cert_info.h: Implemented
+	  cert(PEM),pubk(PEM),pubk(SSH) data entries
+	* [r74] src/mappers/openssh_mapper.c: Finished openssh-mapper.c
+	  coding
+	* [r73] src/tools/pkcs11_inspect.c: pkcs11_inspect: print correct
+	  certificate number
+
+2005-06-08  jonsito
+
+	* [r72] src/common/cert_info.c: more work on extracting
+	  certificate's public key
+
+2005-06-07  jonsito
+
+	* [r71] src/mappers/openssh_mapper.c: Add openssh_mapper.c to svn
+	  :-)
+	* [r70] docs/pam_pkcs11.xml: OpenSSH mapper documentation typos
+	* [r69] docs/pam_pkcs11.xml: OpenSSH mapper documentation
+	* [r68] etc/pam_pkcs11.conf.example, src/common/cert_info.c,
+	  src/common/cert_info.h, src/mappers/Makefile.am,
+	  src/mappers/mapper.c: Adding OpenSSH mapper (work-in-progress)
+	* [r67] src/common/strings.c, src/common/strings.h: Added new
+	  methods for string mgmt
+
+2005-06-06  martin
+
+	* [r66] docs/pam_pkcs11.xml: Correct name
+
+2005-06-06  ludovic.rousseau
+
+	* [r65] docs/pam_pkcs11.xml: english grammar correction
+	* [r64] etc/card_eventmgr.conf.example,
+	  etc/pam_pkcs11.conf.example: english grammar corrections
+	* [r63] docs/Makefile.am: do not call tidy since it modifies the
+	  generated html in a bad way
+	* [r62] docs/pam_pkcs11.xml: correct some punctuation (end of
+	  phrase dot, extra space in parenthesis)
+	* [r61] docs/pam_pkcs11.xml: remove <prompt> tags and reformat
+	  <userinput> data
+	* [r60] docs/pam_pkcs11.xml: use firstname & surname instead of the
+	  invalid name tag
+	* [r59] docs/pam_pkcs11.html: re-add this generated file since it
+	  is displayed by the website
+	* [r58] docs/pam_pkcs11.xml: Declare the DTD using <!DOCTYPE ...>
+	  so that rxp (XML validator) can
+	  find it
+	* [r57] docs/pam_pkcs11.html: file generated from pam_pkcs11.xml so
+	  should not be in subversion
+	* [r56] docs/pam_pkcs11.xsl: remove shade.verbatim declaration
+	  since it is useless(?) and generates
+	  warnings:
+	  The shade.verbatim parameter is deprecated. Use CSS instead,
+	* [r55] docs/pam_pkcs11.xsl: do not use a hard coded path for
+	  docbook.xsl
+	* [r54] docs/Makefile.am: use --path to specify different locations
+	  to find docbook.xsl
+	* [r53] Makefile.am: remove the definition of MAINTAINERCLEANFILES
+	  since the indicated files
+	  are already removed by the implicit 'make maintainer-clean'
+	* [r52] aclocal/Makefile.am, docs/Makefile.am, etc/Makefile.am,
+	  src/Makefile.am, src/common/Makefile.am, src/mappers/Makefile.am,
+	  src/pam_pkcs11/Makefile.am, src/scconf/Makefile.am,
+	  src/tools/Makefile.am, tools/Makefile.am: do not use
+	  'MAINTAINERCLEANFILES = Makefile.in' since is it implicit
+	  'make maintainer-clean' can be used to remove Makefile.in files
+	* [r51] src/mappers/mapper.c: get_mapent(): skip comment lines
+	* [r50] src/mappers/mapper.c: get_mapent(): allocate len+1 instead
+	  of len bytes to store a
+	  NULL-terminated string
+	* [r49] src/tools/pklogin_finder.c: add a \n for a printf()
+	* [r48] docs/Makefile.am: add pam_pkcs11.html to
+	  MAINTAINERCLEANFILES (make maintainer-clean)
+	* [r47] docs/Makefile.am: the html files also depends on
+	  $(STYLESHEET)
+	* [r46] tools/make_hash_link.sh: use * instead of "*" to match the
+	  files
+
+2005-05-24  ludovic.rousseau
+
+	* [r45] src/tools/card_eventmgr.c: only set first_loop = FALSE;
+	  after looping on all readers
+	* [r44] src/tools/card_eventmgr.c: cleanly exit in case of error
+	  (remove pidfile)
+	* [r43] src/tools/card_eventmgr.c: cleanly exit in case of error
+	  (remove pidfile)
+	* [r42] src/tools/card_eventmgr.c: exit if no reader is found at
+	  startup
+	* [r41] src/tools/card_eventmgr.c: remove card state parsing debug
+	* [r40] src/tools/card_eventmgr.c: remove \n in debug strings
+	* [r39] src/tools/card_eventmgr.c: trap signals even if pidfile=<>
+	  argument is not used so we always have a
+	  clean exit
+	* [r38] src/tools/card_eventmgr.c: remove the timestamp information
+	* [r37] src/tools/card_eventmgr.c: main(): remove a useless call to
+	  fflush(stdout); that was directly
+	  imported from pcsc_scan
+
+2005-05-23  ludovic.rousseau
+
+	* [r36] docs/card_eventmgr.1: document kill and pidfile= arguments
+	* [r35] src/tools/card_eventmgr.c: add support for kill and
+	  pidfile=<filename>
+
+2005-05-19  jonsito
+
+	* [r34] AUTHORS, docs/pam_pkcs11.xml: Add Ludovic to author's list
+	* [r33] docs/pam_pkcs11.xml, etc/pam_pkcs11.conf.example: Generic
+	  mapper documentation
+
+2005-05-18  ludovic.rousseau
+
+	* [r32] src/tools/pkcs11_eventmgr.c: add two missing \n with
+	  fprintf(stderr,..)
+	* [r31] etc/pkcs11_eventmgr.conf.example: convert spaces in tab
+	* [r30] src/tools/card_eventmgr.c: add two missing \n with
+	  fprintf(stderr,..)
+	* [r29] src/mappers/generic_mapper.c:
+	  generic_mapper_find_user()/generic_mapper_match_user(): remove
+	  two
+	  unused variables
+	* [r28] tools/make_hash_link.sh: do not use `ls *` to get the list
+	  of files but "*" to correctly manage
+	  files with spaces in their name
+	* [r27] tools/make_hash_link.sh: do not save/restore the current
+	  directory since we do not need to
+	* [r26] tools/make_hash_link.sh: remove space characters at end of
+	  lines
+	* [r25] tools/make_hash_link.sh: display the filename of files we
+	  can't do anything with. Maybe it is
+	  because the format is wrong or they can't be read or whatever.
+	* [r24] tools/make_hash_link.sh: revert my previous patch. We need
+	  to redirect stderr since the
+	  certificate may not be in pem format and openssl will shout
+	* [r23] tools/make_hash_link.sh: do not redirect stderr to
+	  /dev/null in the hash generation to get errors
+	  like "Permission denied" if the certificate can't be read
+	* [r22] tools/make_hash_link.sh: in the test of the presence of
+	  openssl we escape the result string to
+	  have only one strings even with space characters
+
+2005-05-17  jonsito
+
+	* [r21] src/mappers/generic_mapper.c: typos in generic_mapper.c
+
+2005-05-17  ludovic.rousseau
+
+	* [r20] tools/make_hash_link.sh: check that openssl is installed
+	* [r19] src/mappers/null_mapper.c: add _DEFAULT_MAPPER_FIND_USER to
+	  avoid an undefined symbol:
+	  mapper_find_user
+	* [r18] src/mappers/Makefile.am: add @LIBCOMMON@ to
+	  ldap_mapper_la_LIBADD and opensc_mapper_la_LIBADD to
+	  avoid missing symbols at link time
+
+2005-05-12  ludovic.rousseau
+
+	* [r17] docs/README.mappers: reformat
+	* [r16] docs/README.eventmgr: rephrase and reformat
+	* [r15] docs/README.autologin: reformat
+	* [r14] docs/pklogin_finder.1: rephrase and reformat
+	* [r13] docs/pam_pkcs11.8: reformat
+	* [r12] docs/card_eventmgr.1: rephrase and reformat
+
+2005-05-11  ludovic.rousseau
+
+	* [r11] docs/pkcs11_inspect.1: rephrase and reformat
+
+2005-05-06  jonsito
+
+	* [r10] src/pam_pkcs11/Makefile.am: Makefile fix for x64 arch
+
+2005-04-14  jonsito
+
+	* [r9] ChangeLog, NEWS, etc/pam_pkcs11.conf.example,
+	  src/mappers/generic_mapper.c, src/mappers/mapper.c,
+	  src/mappers/mapper.h, src/mappers/pwent_mapper.c: generic_mapper
+	  coding finished
+
+2005-04-13  jonsito
+
+	* [r8] src/mappers/generic_mapper.c: preliminary works on generic
+	  mapper
+
+2005-04-12  aj
+
+	* [r7] bootstrap: add bootstrap script for developers and the
+	  snapshot mechanism.
+	* [r6] configure.in: set the version to "WIP" (work in progress)
+	  for the snapshot script.
+	* [r5] src/mappers/Makefile.am, src/pam_pkcs11/Makefile.am,
+	  tools/Makefile.am: remove a few Makefile.in on make
+	  maintainer-clean
+	* [r4] .: copy release 0.5.2 to trunk.
+	* [r2] import current version 0.5.2
+

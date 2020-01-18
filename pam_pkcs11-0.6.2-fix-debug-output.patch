@@ -1,0 +1,12 @@
+diff -up ./src/mappers/ldap_mapper.c.fix_debug_output ./src/mappers/ldap_mapper.c
+--- ./src/mappers/ldap_mapper.c.fix_debug_output	2015-09-11 09:32:41.784724943 -0700
++++ ./src/mappers/ldap_mapper.c	2015-09-11 09:33:09.749227011 -0700
+@@ -1184,7 +1184,7 @@ DBG1("test ssltls = %s", ssltls);
+ 	DBG1("attribute     = %s", attribute);
+ 	DBG1("uid_attribute = %s", uid_attribute);
+ 	for (map = attribute_map; map != NULL; map = map->next) {
+-		DBG1("attribute_map = %s", attribute_map->data);
++		DBG1("attribute_map = %s", map->data);
+ 	}
+ 	DBG1("filter        = %s", filter);
+ 	DBG1("searchtimeout = %d", searchtimeout);

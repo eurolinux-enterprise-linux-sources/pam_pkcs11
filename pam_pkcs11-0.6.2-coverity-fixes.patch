@@ -1,0 +1,34 @@
+diff -up ./src/mappers/ldap_mapper.c.coverity ./src/mappers/ldap_mapper.c
+--- ./src/mappers/ldap_mapper.c.coverity	2014-01-21 09:54:34.498832920 -0800
++++ ./src/mappers/ldap_mapper.c	2014-01-21 10:05:07.899436555 -0800
+@@ -104,7 +104,11 @@ static const char *attribute="userCertif
+ static const char *filter="(&(objectClass=posixAccount)(uid=%s)";
+ static int searchtimeout=20;
+ static int ignorecase=0;
++#ifdef HAVE_NSS
++static X509 **ldap_x509;
++#else
+ static const X509 **ldap_x509;
++#endif
+ static int certcnt=0;
+ 
+ static ldap_ssl_options_t ssl_on = SSL_OFF;
+@@ -598,7 +602,9 @@ static int ldap_get_certificate(const ch
+ 	char filter_str[100];
+ 	char *attrs[2];
+ 	int rv;
++#ifndef HAVE_NSS
+ 	void *bv_val;
++#endif
+ 
+ 	char uri[4096];
+ 	char uribuf[4096];
+@@ -630,7 +636,7 @@ static int ldap_get_certificate(const ch
+ 	/* Add a space separated list of URIs */
+ 	/* TODO: no spaces in one URI allowed => URL-encoding? */
+ 	if(strncmp(ldapURI,"",1))
+-		for (p = uri; p != NULL; )
++		for (p = uri, rv=0; p != NULL; )
+ 		{
+ 			char *q = strchr (p, ' ');
+ 			if (q != NULL)

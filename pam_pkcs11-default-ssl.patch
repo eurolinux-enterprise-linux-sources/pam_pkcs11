@@ -1,0 +1,20 @@
+diff -up ./src/mappers/ldap_mapper.c.default_ssl ./src/mappers/ldap_mapper.c
+--- ./src/mappers/ldap_mapper.c.default_ssl	2013-08-13 16:35:28.000000000 -0700
++++ ./src/mappers/ldap_mapper.c	2013-08-13 16:38:19.000000000 -0700
+@@ -822,13 +822,15 @@ static int read_config(scconf_block *blk
+ 	ignorecase = scconf_get_bool(blk,"ignorecase",ignorecase);
+ 	searchtimeout = scconf_get_int(blk,"searchtimeout",searchtimeout);
+ 
+-	ssltls =  scconf_get_str(blk,"ssl","off");
++	ssltls =  scconf_get_str(blk,"ssl","default");
+ 	if (! strncasecmp (ssltls, "tls", 3))
+ 		ssl_on = SSL_START_TLS;
+ 	else if( ! strncasecmp (ssltls, "on", 2))
+ 		ssl_on = SSL_LDAPS;
+ 	else if( ! strncasecmp (ssltls, "ssl", 3))
+ 		ssl_on = SSL_LDAPS;
++	else if ( ! strncasecmp (ssltls, "default", 7) && (ldapport == 636))
++		ssl_on = SSL_LDAPS; /* if we didn't set the ssl variable, and the port is the ssl port, turn on ssl */
+ 
+ #if defined HAVE_LDAP_START_TLS_S || (defined(HAVE_LDAP_SET_OPTION) && defined(LDAP_OPT_X_TLS))
+ 	/* TLS specific options */
